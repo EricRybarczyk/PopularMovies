@@ -1,24 +1,73 @@
 package com.example.ericrybarczyk.popularmovies;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
+import android.net.Uri;
+import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieService {
 
-    private String movieApiKey;
+    private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
+    private static final String MOVIE_API_POPULAR = "popular";
+    private static final String MOVIE_API_TOP = "top_rated";
+    private static final String QUERY_API_KEY = "api_key";
+    private static final String TAG = MovieService.class.getName();
+
+    private final String movieApiKey;
+    private URL movieServiceUrl;
 
 
     public MovieService(Context context) {
-        Resources resources = context.getResources();
-        XmlResourceParser parser = resources.getXml(R.xml.keys);
 
-        // TODO - figure out how to do read the xml file
+        movieApiKey = getApiKey(context); // TODO - set the API Key value
 
-        parser.close();
+        movieServiceUrl = buildUrl();
+    }
+
+    private URL buildUrl() {
+        Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
+                .appendPath(MOVIE_API_POPULAR)
+                .appendQueryParameter(QUERY_API_KEY, movieApiKey)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return url;
+    }
+
+    private String getApiKey(Context context) {
+        InputStream inputStream = context.getResources().openRawResource(R.raw.apikey);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        String result;
+        int c;
+
+        try {
+            c = inputStream.read();
+            while (c != -1) {
+                outputStream.write(c);
+                c = inputStream.read();
+            }
+            inputStream.close();
+            result = outputStream.toString();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            result = "undefined";
+        }
+
+        return result;
     }
 
     public List<String> getMovies() {
