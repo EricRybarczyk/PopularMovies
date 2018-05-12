@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+
 public class MainActivity extends AppCompatActivity {
 
     MovieAdapter movieAdapter;
@@ -27,5 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
         movieAdapter = new MovieAdapter(movieService);
         recyclerView.setAdapter(movieAdapter);
+
     }
 }

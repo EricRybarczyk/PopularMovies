@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
@@ -16,7 +17,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     private List<String> movieList;
 
     public MovieAdapter(MovieService movieService) {
-        this.movieList = movieService.getMovies();
+        try {
+            this.movieList = movieService.getMovies();
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO - log and do something better for the user
+        }
         this.numberOfMovies = this.movieList.size();
     }
 
