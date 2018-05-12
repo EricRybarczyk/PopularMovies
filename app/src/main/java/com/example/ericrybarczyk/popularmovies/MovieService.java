@@ -1,21 +1,22 @@
 package com.example.ericrybarczyk.popularmovies;
 
-import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class MovieService {
@@ -26,77 +27,73 @@ public class MovieService {
     private static final String QUERY_API_KEY = "api_key";
     private static final String TAG = MovieService.class.getName();
 
+    private static final String JSON_KEY_RESULTS = "results";
+    private static final String JSON_KEY_MOVIE_ID = "id";
+    private static final String JSON_KEY_TITLE = "title";
+    private static final String JSON_KEY_POSTER = "poster_path";
+    private static final String JSON_KEY_BACKDROP = "backdrop_path";
+    private static final String JSON_KEY_OVERVIEW = "overview";
+    private static final String JSON_KEY_RELEASE_DATE = "release_date";
+    private static final String JSON_KEY_DATE_FORMAT = "yyyy-MM-dd";
+
     private URL movieServiceUrl;
-    private String movieData;
-    private JSONObject jsonObject;
-
-    public JSONObject getJsonObject() {
-        return jsonObject;
-    }
 
 
-    public MovieService(Context context) {
-
-        String movieApiKey = getApiKey(context); // TODO - set the API Key value
+    public MovieService(String movieApiKey) {
         movieServiceUrl = buildUrl(movieApiKey);
-
     }
 
 
-    protected List<String> getMovies() throws IOException {
+    protected List<Movie> getMovies() {
+        String rawMovieData = null;
+        ArrayList<Movie> movies = new ArrayList<>();
 
-        new MovieServiceQueryTask().execute(movieServiceUrl);
+        try {
+            rawMovieData = getMovieData(this.movieServiceUrl);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        JSONObject fullMovieCollection;
+        JSONArray movieResults;
+        try {
+            fullMovieCollection = new JSONObject(rawMovieData);
+            movieResults = fullMovieCollection.getJSONArray(JSON_KEY_RESULTS);
+
+            for (int i = 0; i < movieResults.length(); i++) {
+                JSONObject jsonMovie = new JSONObject(movieResults.getString(i));
+                int movieId = jsonMovie.getInt(JSON_KEY_MOVIE_ID);
+                String title = jsonMovie.getString(JSON_KEY_TITLE);
+                String posterPath = jsonMovie.getString(JSON_KEY_POSTER);
+                String backdropPath = jsonMovie.getString(JSON_KEY_BACKDROP);
+                String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
+                Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
+                        .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
+
+                Movie movie = new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate);
+
+                movies.add(movie);
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
 
 
-        ArrayList<String> movies = new ArrayList<>();
-
-        //String movieJson = getMovieData(movieServiceUrl);
-
-
-
-
-        movies.add("Star Wars");
-        movies.add("Star Trek");
-        movies.add("Space Balls");
-        movies.add("The Matrix");
-        movies.add("The Load Of The Rings");
-        movies.add("Iron Man");
-        movies.add("The Martian");
-        movies.add("The Hunt For Red October");
-        movies.add("Patriot Games");
-        movies.add("Guardians Of The Galaxy");
-        movies.add("Point Break");
-        movies.add("When Harry Met Sally");
-        movies.add("Goldeneye");
-        movies.add("Deadpool");
-        movies.add("Contact");
-        movies.add("The Terminator");
-        movies.add("Alien");
-        movies.add("The Abyss");
-        movies.add("Spider Man");
-        movies.add("The Wizard Of Oz");
+//        int id = 1977;
+//        String title = "Star Wars";
+//        String img = "image.jpg";
+//        String backdrop = "backdrop.jpg";
+//        String overview = "the best ever";
+//        Date relDate = new Date();
+//        Movie dummyMovie = new Movie(id, title, img, backdrop, overview, relDate);
+//
+//        movies.add(dummyMovie);
 
         return movies;
     }
 
 
-    protected class MovieServiceQueryTask extends AsyncTask<URL, Void, String> {
-        @Override
-        protected String doInBackground(URL... urls) {
-            try {
-                String result = getMovieData(urls[0]);
-                return result;
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            movieData = s;
-        }
-    }
 
 
     private URL buildUrl(String apiKey) {
@@ -116,27 +113,7 @@ public class MovieService {
         return url;
     }
 
-    private String getApiKey(Context context) {
-        InputStream inputStream = context.getResources().openRawResource(R.raw.apikey);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        String result;
-        int c;
 
-        try {
-            c = inputStream.read();
-            while (c != -1) {
-                outputStream.write(c);
-                c = inputStream.read();
-            }
-            inputStream.close();
-            result = outputStream.toString();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            result = "undefined";
-        }
-
-        return result;
-    }
 
 
     /*
@@ -164,12 +141,33 @@ public class MovieService {
         }
         catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            throw e;
+            return null;
         }
         finally {
             urlConnection.disconnect();
         }
     }
+
+
+//new MovieServiceQueryTask().execute(movieServiceUrl);
+
+//    protected class MovieServiceQueryTask extends AsyncTask<URL, Void, String> {
+//        @Override
+//        protected String doInBackground(URL... urls) {
+//            try {
+//                String result = getMovieData(urls[0]);
+//                return result;
+//            } catch (IOException e) {
+//                Log.e(TAG, e.getMessage());
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            movieData = s;
+//        }
+//    }
 
 }
 

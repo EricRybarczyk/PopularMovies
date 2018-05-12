@@ -13,16 +13,19 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
-    private int numberOfMovies;
-    private List<String> movieList;
+    private List<Movie> movieList;
 
-    public MovieAdapter(MovieService movieService) {
-        try {
-            this.movieList = movieService.getMovies();
-        } catch (IOException e) {
-            e.printStackTrace(); // TODO - log and do something better for the user
-        }
-        this.numberOfMovies = this.movieList.size();
+    public MovieAdapter() {
+//        try {
+//            this.movieList = movieService.getMovies();
+//        } catch (IOException e) {
+//            e.printStackTrace(); // TODO - log and do something better for the user
+//        }
+    }
+
+    public void setMovieData(List<Movie> movieList) {
+        this.movieList = movieList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -35,13 +38,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
     @Override
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
-        String movie = movieList.get(position);
-        holder.movieTextView.setText(movie);
+        Movie movie = movieList.get(position);
+        holder.movieTextView.setText(movie.getTitle());
     }
 
     @Override
     public int getItemCount() {
-        return numberOfMovies;
+        if (movieList == null) {
+            return 0;
+        }
+        return movieList.size();
     }
 
 
