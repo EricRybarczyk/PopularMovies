@@ -67,9 +67,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
             movieImageView = itemView.findViewById(R.id.iv_movie_item);
         }
 
-        void bind() {
-            // TODO - I think this is where I will set up the image ... or do I not really need this? Other demos just handle in constructor like above.
-        }
     }
 
 }
