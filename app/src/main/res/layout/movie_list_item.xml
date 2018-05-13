@@ -3,10 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <ImageView
         android:id="@+id/iv_movie_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp" />
+        android:contentDescription="@string/aria_movie_poster_image"
+        android:layout_margin="10dp"/>
 
 </FrameLayout>

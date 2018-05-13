@@ -22,6 +22,7 @@ import java.util.Scanner;
 public class MovieService {
 
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
+    private static final String MOVIE_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
     private static final String MOVIE_API_POPULAR = "popular";
     private static final String MOVIE_API_TOP = "top_rated";
     private static final String QUERY_API_KEY = "api_key";
@@ -64,7 +65,7 @@ public class MovieService {
                 JSONObject jsonMovie = new JSONObject(movieResults.getString(i));
                 int movieId = jsonMovie.getInt(JSON_KEY_MOVIE_ID);
                 String title = jsonMovie.getString(JSON_KEY_TITLE);
-                String posterPath = jsonMovie.getString(JSON_KEY_POSTER);
+                String posterPath = MOVIE_IMAGE_BASE_URL + jsonMovie.getString(JSON_KEY_POSTER);
                 String backdropPath = jsonMovie.getString(JSON_KEY_BACKDROP);
                 String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
                 Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
@@ -95,10 +96,10 @@ public class MovieService {
 
 
 
-
+// TODO - implement preference for which api path to call (popular, or top)
     private URL buildUrl(String apiKey) {
         Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
-                .appendPath(MOVIE_API_POPULAR)
+                .appendPath(MOVIE_API_TOP)
                 .appendQueryParameter(QUERY_API_KEY, apiKey)
                 .build();
 

@@ -6,15 +6,15 @@ public class Movie {
 
     private int id;
     private String title;
-    private String relativeImagePath;
+    private String imagePath;
     private String relativeBackdropPath;
     private String overview;
     private Date releaseDate;
 
-    public Movie(int id, String title, String relativeImagePath, String relativeBackdropPath, String overview, Date releaseDate) {
+    public Movie(int id, String title, String imagePath, String relativeBackdropPath, String overview, Date releaseDate) {
         this.id = id;
         this.title = title;
-        this.relativeImagePath = relativeImagePath;
+        this.imagePath = imagePath;
         this.relativeBackdropPath = relativeBackdropPath;
         this.overview = overview;
         this.releaseDate = releaseDate;
@@ -29,8 +29,8 @@ public class Movie {
         return title;
     }
 
-    public String getRelativeImagePath() {
-        return relativeImagePath;
+    public String getImagePath() {
+        return imagePath;
     }
 
     public String getRelativeBackdropPath() {

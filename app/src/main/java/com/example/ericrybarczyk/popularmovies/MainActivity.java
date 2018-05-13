@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
 
-        movieAdapter = new MovieAdapter();
+        movieAdapter = new MovieAdapter(this);
         recyclerView.setAdapter(movieAdapter);
 
         loadMovieData(false);

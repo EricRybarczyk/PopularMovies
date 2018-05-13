@@ -1,5 +1,6 @@
 package com.example.ericrybarczyk.popularmovies;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,19 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
     private List<Movie> movieList;
+    private Context parentContext;
 
-    public MovieAdapter() {
-//        try {
-//            this.movieList = movieService.getMovies();
-//        } catch (IOException e) {
-//            e.printStackTrace(); // TODO - log and do something better for the user
-//        }
+    public MovieAdapter(Context context) {
+        parentContext = context;
     }
 
     public void setMovieData(List<Movie> movieList) {
@@ -39,7 +38,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     @Override
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = movieList.get(position);
-        holder.movieTextView.setText(movie.getTitle());
+        //holder.movieTextView.setText(movie.getTitle());
+
+        Picasso.with(parentContext)
+                .load(movie.getImagePath())
+                .into(holder.movieImageView);
     }
 
     @Override
@@ -54,13 +57,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public class MovieHolder extends RecyclerView.ViewHolder {
 
         ImageView movieImageView;
-        TextView movieTextView;
+        //TextView movieTextView;
 
         public MovieHolder(View itemView) {
             super(itemView);
+            //movieTextView = itemView.findViewById(R.id.iv_movie_item);
+
             // TODO - look into using Butterknife
-//            movieImageView = itemView.findViewById(R.id.iv_movie_item);
-            movieTextView = itemView.findViewById(R.id.iv_movie_item);
+            movieImageView = itemView.findViewById(R.id.iv_movie_item);
         }
 
         void bind() {
