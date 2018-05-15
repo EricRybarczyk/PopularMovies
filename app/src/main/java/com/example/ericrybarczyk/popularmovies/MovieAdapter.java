@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -17,10 +16,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
     private List<Movie> movieList;
     private Context parentContext;
+    private final MovieAdapterOnClickHandler movieItemClickHandler;
 
-    public MovieAdapter(Context context) {
-        parentContext = context;
+    public interface MovieAdapterOnClickHandler {
+        void onClick(int movieId);
     }
+
+    public MovieAdapter(Context context, MovieAdapterOnClickHandler clickHandler) {
+        parentContext = context;
+        movieItemClickHandler = clickHandler;
+    }
+
 
     public void setMovieData(List<Movie> movieList) {
         this.movieList = movieList;
@@ -38,8 +44,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     @Override
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = movieList.get(position);
-        //holder.movieTextView.setText(movie.getTitle());
 
+        // TODO - improve Picasso use - refer to Project 1 code review feedback
         Picasso.with(parentContext)
                 .load(movie.getImagePath())
                 .into(holder.movieImageView);
@@ -54,19 +60,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     }
 
 
-    public class MovieHolder extends RecyclerView.ViewHolder {
+    public class MovieHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView movieImageView;
         //TextView movieTextView;
 
         public MovieHolder(View itemView) {
             super(itemView);
-            //movieTextView = itemView.findViewById(R.id.iv_movie_item);
 
             // TODO - look into using Butterknife
             movieImageView = itemView.findViewById(R.id.iv_movie_item);
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            int movieId = movieList.get(adapterPosition).getId();
+            movieItemClickHandler.onClick(movieId);
+        }
     }
 
 }

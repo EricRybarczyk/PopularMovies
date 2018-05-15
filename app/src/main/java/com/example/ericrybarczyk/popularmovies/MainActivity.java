@@ -2,6 +2,8 @@ package com.example.ericrybarczyk.popularmovies;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -19,9 +21,14 @@ import java.io.InputStream;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>> {
+public class MainActivity extends AppCompatActivity implements
+        MovieAdapter.MovieAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<List<Movie>> {
+
+    /// TODO - clean up unused constants
 
     private static final int MOVIE_LOADER = 529;
+    private static final String INTENT_EXTRA_KEY_MOVIE_ID = "com.example.ericrybarczyk.popularmovies.movie_id"; // TODO - probably move this to resource file for access from multiple activities
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_LIST_TYPE_KEY = "requestedMovieListType";
     private static final String MOVIE_API_POPULAR = "popular";
@@ -46,19 +53,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-
-        // -----------------------------------------------------------------------------------
-
-        // set up the movie service
-        //this.movieService = new MovieService(this);
-        //MovieAdapter movieAdapter = new MovieAdapter(movieService);
-
-        // -----------------------------------------------------------------------------------
-
-
-
-
-        movieAdapter = new MovieAdapter(this);
+        movieAdapter = new MovieAdapter(this, this);
         recyclerView.setAdapter(movieAdapter);
 
         loadMovieData(false);
@@ -148,5 +143,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         return result;
+    }
+
+    @Override
+    public void onClick(int movieId) {
+        Class destination = DetailActivity.class;
+        Intent intentToStart = new Intent(this, destination);
+        intentToStart.putExtra(INTENT_EXTRA_KEY_MOVIE_ID, movieId);
+        startActivity(intentToStart);
     }
 }
