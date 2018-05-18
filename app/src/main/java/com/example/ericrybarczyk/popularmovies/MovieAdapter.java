@@ -45,7 +45,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = movieList.get(position);
 
-        // TODO - improve Picasso use - refer to Project 1 code review feedback
+        // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(parentContext)
                 .load(movie.getImagePath())
                 .into(holder.movieImageView);

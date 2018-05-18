@@ -105,6 +105,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         tempTextView.setText(String.valueOf(data.getId())); // TODO - remove this later
 
+        // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(this)
                 .load(data.getImagePath())
                 .into(imageView);
