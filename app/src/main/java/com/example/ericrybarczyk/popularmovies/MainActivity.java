@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
@@ -150,5 +153,22 @@ public class MainActivity extends AppCompatActivity implements
         Intent intentToStart = new Intent(this, destination);
         intentToStart.putExtra(INTENT_EXTRA_KEY_MOVIE_ID, movieId);
         startActivity(intentToStart);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.preferences_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

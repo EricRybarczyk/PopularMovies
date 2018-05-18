@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="aria_movie_poster_image">Movie Poster Image</string>
+    <string name="pref_menu_title">Preferences</string>
+
+    <!-- Preferences - grid sort order -->
+    <string name="pref_sort_label">Sort Order</string>
+    <string name="pref_sort_key">sort_key</string>
+
+    <string name="pref_sort_popular_key">popular</string>
+    <string name="pref_sort_rating_key">rating</string>
+
+    <string name="pref_sort_popular_value">popular</string>
+    <string name="pref_sort_rating_value">rating</string>
+
 </resources>
