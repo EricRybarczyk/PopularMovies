@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.squareup.picasso.Picasso;
 

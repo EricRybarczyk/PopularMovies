@@ -2,7 +2,6 @@ package com.example.ericrybarczyk.popularmovies;
 
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,11 +14,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 

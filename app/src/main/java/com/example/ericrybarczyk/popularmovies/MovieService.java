@@ -3,8 +3,9 @@ package com.example.ericrybarczyk.popularmovies;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.ericrybarczyk.popularmovies.model.Movie;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
