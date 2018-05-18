@@ -3,6 +3,7 @@ package com.example.ericrybarczyk.popularmovies;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -10,6 +11,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,7 +27,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MovieAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<List<Movie>> {
+        LoaderManager.LoaderCallbacks<List<Movie>>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     /// TODO - clean up unused constants
 
@@ -33,19 +36,18 @@ public class MainActivity extends AppCompatActivity implements
     private static final String INTENT_EXTRA_KEY_MOVIE_ID = "com.example.ericrybarczyk.popularmovies.movie_id"; // TODO - probably move this to resource file for access from multiple activities
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_LIST_TYPE_KEY = "requestedMovieListType";
-    private static final String MOVIE_API_POPULAR = "popular";
-    private static final String MOVIE_API_TOP = "top_rated";
-    private static final String QUERY_API_KEY = "api_key";
+//    private static final String MOVIE_API_POPULAR = "popular";
+//    private static final String MOVIE_API_TOP = "top_rated";
+//    private static final String QUERY_API_KEY = "api_key";
     private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter movieAdapter;
+    private String sortPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //android.support.v4.app.LoaderManager
-        //getSupportLoaderManager().initLoader(MOVIE_LOADER, null, this);
-
+        setPreferences();
 
         // set up the RecyclerView and layout
         // TODO - butterknife
@@ -61,11 +63,23 @@ public class MainActivity extends AppCompatActivity implements
         loadMovieData(false);
     }
 
+    private void setPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sortPreference = sharedPreferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popular_value));
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
 
     private void loadMovieData(boolean refresh) {
 
         Bundle listTypeBundle = new Bundle();
-        listTypeBundle.putString(MOVIE_LIST_TYPE_KEY, MOVIE_API_POPULAR);  //TODO - implement preference for which movie list to get - TOP or POPULAR
+        listTypeBundle.putString(MOVIE_LIST_TYPE_KEY, sortPreference);  //TODO - implement preference for which movie list to get - TOP or POPULAR
 
         LoaderManager loaderManager = getSupportLoaderManager();
 
@@ -103,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 MovieService movieService = new MovieService(new ApiKeyUtil(getResources()).getApiKey());
 
-                return movieService.getMovies();
+                return movieService.getMovies(sortPreference);
             }
 
             @Override
@@ -123,29 +137,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoaderReset(@NonNull Loader<List<Movie>> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
     }
-
-
-//    private String getApiKey() {
-//        InputStream inputStream = getResources().openRawResource(R.raw.apikey);
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        String result;
-//        int c;
-//
-//        try {
-//            c = inputStream.read();
-//            while (c != -1) {
-//                outputStream.write(c);
-//                c = inputStream.read();
-//            }
-//            inputStream.close();
-//            result = outputStream.toString();
-//        } catch (IOException e) {
-//            Log.e(TAG, e.getMessage());
-//            result = "undefined";
-//        }
-//
-//        return result;
-//    }
+    
 
     @Override
     public void onClick(int movieId) {
@@ -170,5 +162,13 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_sort_key))) {
+            sortPreference = sharedPreferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popular_value));
+            loadMovieData(true);
+        }
     }
 }

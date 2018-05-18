@@ -24,8 +24,8 @@ public class MovieService {
 
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
-    private static final String MOVIE_API_POPULAR = "popular";
-    private static final String MOVIE_API_TOP = "top_rated";
+//    private static final String MOVIE_API_POPULAR = "popular";
+//    private static final String MOVIE_API_TOP = "top_rated";
     private static final String QUERY_API_KEY = "api_key";
     private static final String JSON_KEY_RESULTS = "results";
     private static final String JSON_KEY_MOVIE_ID = "id";
@@ -46,12 +46,11 @@ public class MovieService {
     }
 
 
-    protected List<Movie> getMovies() {
+    protected List<Movie> getMovies(String sortPreference) {
         String rawMovieData = null;
         ArrayList<Movie> movies = new ArrayList<>();
 
-        // TODO - implement preference for which api path to call (popular, or top)
-        URL movieServiceUrl = buildUrl(movieApiKey, MOVIE_API_POPULAR);
+        URL movieServiceUrl = buildUrl(movieApiKey, sortPreference);
 
         try {
             rawMovieData = getMovieData(movieServiceUrl);
@@ -117,10 +116,11 @@ public class MovieService {
     }
 
 
+    // TODO - review how I use this and make sure it is as I intended for error conditions
     public Movie getErrorMovie() {
         int id = -1;
         String title = "Unknown Movie";
-        String img = "missing.jpg";
+        String img = "missing.jpg"; // TODO - figure out how to handle this in Picasso
         String backdrop = "missing.jpg";
         String overview = "The requested movie could not be located.";
         Date relDate = new Date();
