@@ -2,6 +2,8 @@ package com.example.ericrybarczyk.popularmovies;
 
 import java.util.Date;
 
+// TODO - refactor to a separate 'models' package
+
 public class Movie {
 
     private int id;
@@ -9,15 +11,17 @@ public class Movie {
     private String imagePath;
     private String relativeBackdropPath;
     private String overview;
+    private double userRating;
     private Date releaseDate;
 
-    public Movie(int id, String title, String imagePath, String relativeBackdropPath, String overview, Date releaseDate) {
+    public Movie(int id, String title, String imagePath, String relativeBackdropPath, String overview, Date releaseDate, double userRating) {
         this.id = id;
         this.title = title;
         this.imagePath = imagePath;
         this.relativeBackdropPath = relativeBackdropPath;
         this.overview = overview;
         this.releaseDate = releaseDate;
+        this.userRating = userRating;
     }
 
 
@@ -44,4 +48,6 @@ public class Movie {
     public Date getReleaseDate() {
         return releaseDate;
     }
+
+    public double getUserRating() { return userRating; }
 }

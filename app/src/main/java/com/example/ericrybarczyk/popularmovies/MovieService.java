@@ -26,8 +26,6 @@ public class MovieService {
     private static final String MOVIE_API_POPULAR = "popular";
     private static final String MOVIE_API_TOP = "top_rated";
     private static final String QUERY_API_KEY = "api_key";
-    private static final String TAG = MovieService.class.getName();
-
     private static final String JSON_KEY_RESULTS = "results";
     private static final String JSON_KEY_MOVIE_ID = "id";
     private static final String JSON_KEY_TITLE = "title";
@@ -36,12 +34,14 @@ public class MovieService {
     private static final String JSON_KEY_OVERVIEW = "overview";
     private static final String JSON_KEY_RELEASE_DATE = "release_date";
     private static final String JSON_KEY_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String JSON_KEY_USER_RATING = "vote_average";
+    private static final String TAG = MovieService.class.getName();
 
-    private URL movieServiceUrl;
+    private String movieApiKey;
 
 
     public MovieService(String movieApiKey) {
-        movieServiceUrl = buildUrl(movieApiKey);
+        this.movieApiKey = movieApiKey;
     }
 
 
@@ -49,8 +49,11 @@ public class MovieService {
         String rawMovieData = null;
         ArrayList<Movie> movies = new ArrayList<>();
 
+        // TODO - implement preference for which api path to call (popular, or top)
+        URL movieServiceUrl = buildUrl(movieApiKey, MOVIE_API_POPULAR);
+
         try {
-            rawMovieData = getMovieData(this.movieServiceUrl);
+            rawMovieData = getMovieData(movieServiceUrl);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -70,8 +73,9 @@ public class MovieService {
                 String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
                 Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
                         .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
+                double userRating = jsonMovie.getDouble(JSON_KEY_USER_RATING);
 
-                Movie movie = new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate);
+                Movie movie = new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate, userRating);
 
                 movies.add(movie);
             }
@@ -81,25 +85,53 @@ public class MovieService {
         }
 
 
-//        int id = 1977;
-//        String title = "Star Wars";
-//        String img = "image.jpg";
-//        String backdrop = "backdrop.jpg";
-//        String overview = "the best ever";
-//        Date relDate = new Date();
-//        Movie dummyMovie = new Movie(id, title, img, backdrop, overview, relDate);
-//
-//        movies.add(dummyMovie);
+
 
         return movies;
     }
 
 
+    protected Movie getMovie(int movieId) {
 
-// TODO - implement preference for which api path to call (popular, or top)
-    private URL buildUrl(String apiKey) {
+        URL movieServiceUrl = buildUrl(movieApiKey, String.valueOf(movieId));
+
+        try {
+            String rawMovieData = getMovieData(movieServiceUrl);
+            JSONObject jsonMovie = new JSONObject(rawMovieData);
+            String title = jsonMovie.getString(JSON_KEY_TITLE);
+            String posterPath = MOVIE_IMAGE_BASE_URL + jsonMovie.getString(JSON_KEY_POSTER);
+            String backdropPath = jsonMovie.getString(JSON_KEY_BACKDROP);
+            String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
+            Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
+                    .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
+            double userRating = jsonMovie.getDouble(JSON_KEY_USER_RATING);
+
+            return new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate, userRating);
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        // return a default movie object to represent error condition in a graceful way
+        return getErrorMovie();
+    }
+
+
+    public Movie getErrorMovie() {
+        int id = -1;
+        String title = "Unknown Movie";
+        String img = "missing.jpg";
+        String backdrop = "missing.jpg";
+        String overview = "The requested movie could not be located.";
+        Date relDate = new Date();
+        double userRating = 0.0;
+        return new Movie(id, title, img, backdrop, overview, relDate, userRating);
+    }
+
+
+    private URL buildUrl(String apiKey, String apiPath) {
+
         Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
-                .appendPath(MOVIE_API_TOP)
+                .appendPath(apiPath)
                 .appendQueryParameter(QUERY_API_KEY, apiKey)
                 .build();
 
@@ -138,37 +170,16 @@ public class MovieService {
         }
         catch (IOException e) {
             Log.e(TAG, e.getMessage());
-            throw e;
+            throw e; // TODO - make sure this is an acceptable way to rethrow the exception after logging it
         }
         catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            return null;
+            throw e; // TODO - make sure this is an acceptable way to rethrow the exception after logging it
         }
         finally {
             urlConnection.disconnect();
         }
     }
-
-
-//new MovieServiceQueryTask().execute(movieServiceUrl);
-
-//    protected class MovieServiceQueryTask extends AsyncTask<URL, Void, String> {
-//        @Override
-//        protected String doInBackground(URL... urls) {
-//            try {
-//                String result = getMovieData(urls[0]);
-//                return result;
-//            } catch (IOException e) {
-//                Log.e(TAG, e.getMessage());
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            movieData = s;
-//        }
-//    }
 
 }
 

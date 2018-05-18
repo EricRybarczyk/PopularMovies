@@ -15,6 +15,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public List<Movie> loadInBackground() {
 
-                MovieService movieService = new MovieService(getApiKey());
+                MovieService movieService = new MovieService(new ApiKeyUtil(getResources()).getApiKey());
 
                 return movieService.getMovies();
             }
@@ -123,27 +125,27 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    private String getApiKey() {
-        InputStream inputStream = getResources().openRawResource(R.raw.apikey);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        String result;
-        int c;
-
-        try {
-            c = inputStream.read();
-            while (c != -1) {
-                outputStream.write(c);
-                c = inputStream.read();
-            }
-            inputStream.close();
-            result = outputStream.toString();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            result = "undefined";
-        }
-
-        return result;
-    }
+//    private String getApiKey() {
+//        InputStream inputStream = getResources().openRawResource(R.raw.apikey);
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        String result;
+//        int c;
+//
+//        try {
+//            c = inputStream.read();
+//            while (c != -1) {
+//                outputStream.write(c);
+//                c = inputStream.read();
+//            }
+//            inputStream.close();
+//            result = outputStream.toString();
+//        } catch (IOException e) {
+//            Log.e(TAG, e.getMessage());
+//            result = "undefined";
+//        }
+//
+//        return result;
+//    }
 
     @Override
     public void onClick(int movieId) {
