@@ -9,13 +9,19 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie> {
@@ -30,6 +36,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
 
         Intent starter = getIntent();
         if (starter != null) {
@@ -101,14 +108,37 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
 
         // TODO: Butterknife
-        TextView tempTextView = findViewById(R.id.movie_id_placeholder);
         ImageView imageView = findViewById(R.id.movie_image);
+        RatingBar ratingBar = findViewById(R.id.rating_stars);
+        TextView releaseDate = findViewById(R.id.release_date_value);
+        TextView movieTitle = findViewById(R.id.movie_title_value);
+        TextView movieOverview = findViewById(R.id.movie_overview_value);
 
-        tempTextView.setText(String.valueOf(data.getId())); // TODO - remove this later
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int maxImageWidth = (displayMetrics.widthPixels / 2);
+        imageView.setMaxWidth(maxImageWidth);
+
+        ratingBar.setRating((float)(data.getUserRating() / 2));
+//        ratingBar.setStepSize((float)0.1);
+//        ratingBar.setRating((float)5.0);
+        releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
+        movieTitle.setText(data.getTitle());
+        movieOverview.setText(data.getOverview());
+
+
+
+        TextView debugText = findViewById(R.id.movie_debug_info); // TODO - get rid of this
+        debugText.setText("rating: " + String.valueOf((float)data.getUserRating()));
+
+// TODO - remove this later
+//        TextView tempTextView = findViewById(R.id.movie_id_placeholder);
+//        tempTextView.setText(String.valueOf(data.getId()));
 
         // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(this)
                 .load(data.getImagePath())
+                .placeholder(R.drawable.ic_movie_placeholder)
                 .into(imageView);
     }
 

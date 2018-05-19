@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final int MOVIE_LOADER = 529;
     private static final String INTENT_EXTRA_KEY_MOVIE_ID = "com.example.ericrybarczyk.popularmovies.movie_id"; // TODO - probably move this to resource file for access from multiple activities
-    private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_LIST_TYPE_KEY = "requestedMovieListType";
+//    private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
 //    private static final String MOVIE_API_POPULAR = "popular";
 //    private static final String MOVIE_API_TOP = "top_rated";
 //    private static final String QUERY_API_KEY = "api_key";

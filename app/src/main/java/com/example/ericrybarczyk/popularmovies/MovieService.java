@@ -23,7 +23,7 @@ import java.util.Scanner;
 public class MovieService {
 
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
-    private static final String MOVIE_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
+    private static final String MOVIE_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
 //    private static final String MOVIE_API_POPULAR = "popular";
 //    private static final String MOVIE_API_TOP = "top_rated";
     private static final String QUERY_API_KEY = "api_key";
@@ -134,6 +134,7 @@ public class MovieService {
         Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
                 .appendPath(apiPath)
                 .appendQueryParameter(QUERY_API_KEY, apiKey)
+//                .appendQueryParameter("page", "75") // TODO - make real paging work
                 .build();
 
         URL url = null;

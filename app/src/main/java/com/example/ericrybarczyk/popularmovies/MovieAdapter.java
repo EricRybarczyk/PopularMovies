@@ -49,6 +49,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
         // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(parentContext)
                 .load(movie.getImagePath())
+                .placeholder(R.drawable.ic_movie_placeholder)
                 .into(holder.movieImageView);
     }
 
