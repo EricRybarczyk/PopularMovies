@@ -134,7 +134,6 @@ public class MovieService {
         Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
                 .appendPath(apiPath)
                 .appendQueryParameter(QUERY_API_KEY, apiKey)
-//                .appendQueryParameter("page", "75") // TODO - make real paging work
                 .build();
 
         URL url = null;

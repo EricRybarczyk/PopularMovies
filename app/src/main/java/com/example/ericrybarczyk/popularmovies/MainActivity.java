@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
+import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 
 import java.util.List;
 
@@ -30,15 +31,9 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Movie>>,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    /// TODO - clean up unused constants
 
     private static final int MOVIE_LOADER = 529;
-    private static final String INTENT_EXTRA_KEY_MOVIE_ID = "com.example.ericrybarczyk.popularmovies.movie_id"; // TODO - probably move this to resource file for access from multiple activities
     private static final String MOVIE_LIST_TYPE_KEY = "requestedMovieListType";
-//    private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
-//    private static final String MOVIE_API_POPULAR = "popular";
-//    private static final String MOVIE_API_TOP = "top_rated";
-//    private static final String QUERY_API_KEY = "api_key";
     private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter movieAdapter;
     private String sortPreference;
@@ -66,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements
     private void setPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortPreference = sharedPreferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popular_value));
-
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -79,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
     private void loadMovieData(boolean refresh) {
 
         Bundle listTypeBundle = new Bundle();
-        listTypeBundle.putString(MOVIE_LIST_TYPE_KEY, sortPreference);  //TODO - implement preference for which movie list to get - TOP or POPULAR
+        listTypeBundle.putString(MOVIE_LIST_TYPE_KEY, sortPreference);
 
         LoaderManager loaderManager = getSupportLoaderManager();
 
@@ -143,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onClick(int movieId) {
         Class destination = DetailActivity.class;
         Intent intentToStart = new Intent(this, destination);
-        intentToStart.putExtra(INTENT_EXTRA_KEY_MOVIE_ID, movieId);
+        intentToStart.putExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID, movieId);
         startActivity(intentToStart);
     }
 

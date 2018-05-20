@@ -2,8 +2,6 @@ package com.example.ericrybarczyk.popularmovies.model;
 
 import java.util.Date;
 
-// TODO - refactor to a separate 'models' package
-
 public class Movie {
 
     private int id;

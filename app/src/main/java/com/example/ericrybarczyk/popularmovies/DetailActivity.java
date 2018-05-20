@@ -2,22 +2,22 @@ package com.example.ericrybarczyk.popularmovies;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
+import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +27,6 @@ import java.util.Locale;
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie> {
 
     private static final int MOVIE_LOADER = 5291;
-    private static final String INTENT_EXTRA_KEY_MOVIE_ID = "com.example.ericrybarczyk.popularmovies.movie_id"; // TODO - probably move this to resource file for access from multiple activities
     private static final String BUNDLE_KEY_MOVIE_ID = "movie_id";
     private static final String TAG = MovieService.class.getName();
 
@@ -41,10 +40,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         Intent starter = getIntent();
         if (starter != null) {
             int movieId;
-            if (starter.hasExtra(INTENT_EXTRA_KEY_MOVIE_ID)) {
-                movieId = starter.getIntExtra(INTENT_EXTRA_KEY_MOVIE_ID, 0);
+            if (starter.hasExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID)) {
+                movieId = starter.getIntExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID, 0);
             } else {
-                Log.e(TAG, "Missing expected data: " + INTENT_EXTRA_KEY_MOVIE_ID);
+                Log.e(TAG, "Missing expected data: " + MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID);
                 movieId = -1;
             }
 
@@ -120,20 +119,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         imageView.setMaxWidth(maxImageWidth);
 
         ratingBar.setRating((float)(data.getUserRating() / 2));
-//        ratingBar.setStepSize((float)0.1);
-//        ratingBar.setRating((float)5.0);
         releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
         movieTitle.setText(data.getTitle());
         movieOverview.setText(data.getOverview());
 
-
-
-        TextView debugText = findViewById(R.id.movie_debug_info); // TODO - get rid of this
-        debugText.setText("rating: " + String.valueOf((float)data.getUserRating()));
-
-// TODO - remove this later
-//        TextView tempTextView = findViewById(R.id.movie_id_placeholder);
-//        tempTextView.setText(String.valueOf(data.getId()));
 
         // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(this)
