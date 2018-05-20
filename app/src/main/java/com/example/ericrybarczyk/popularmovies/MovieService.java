@@ -67,13 +67,12 @@ public class MovieService {
                 int movieId = jsonMovie.getInt(JSON_KEY_MOVIE_ID);
                 String title = jsonMovie.getString(JSON_KEY_TITLE);
                 String posterPath = MOVIE_IMAGE_BASE_URL + jsonMovie.getString(JSON_KEY_POSTER);
-                String backdropPath = jsonMovie.getString(JSON_KEY_BACKDROP);
                 String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
                 Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
                         .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
                 double userRating = jsonMovie.getDouble(JSON_KEY_USER_RATING);
 
-                Movie movie = new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate, userRating);
+                Movie movie = new Movie(movieId, title, posterPath, overview, releaseDate, userRating);
 
                 movies.add(movie);
             }
@@ -95,13 +94,12 @@ public class MovieService {
             JSONObject jsonMovie = new JSONObject(rawMovieData);
             String title = jsonMovie.getString(JSON_KEY_TITLE);
             String posterPath = MOVIE_IMAGE_BASE_URL + jsonMovie.getString(JSON_KEY_POSTER);
-            String backdropPath = jsonMovie.getString(JSON_KEY_BACKDROP);
             String overview = jsonMovie.getString(JSON_KEY_OVERVIEW);
             Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
                     .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
             double userRating = jsonMovie.getDouble(JSON_KEY_USER_RATING);
 
-            return new Movie(movieId, title, posterPath, backdropPath, overview, releaseDate, userRating);
+            return new Movie(movieId, title, posterPath, overview, releaseDate, userRating);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -116,11 +114,10 @@ public class MovieService {
         int id = -1;
         String title = "Unknown Movie";
         String img = "missing.jpg"; // TODO - figure out how to handle this in Picasso
-        String backdrop = "missing.jpg";
         String overview = "The requested movie could not be located.";
         Date relDate = new Date();
         double userRating = 0.0;
-        return new Movie(id, title, img, backdrop, overview, relDate, userRating);
+        return new Movie(id, title, img, overview, relDate, userRating);
     }
 
 
