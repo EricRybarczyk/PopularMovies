@@ -25,6 +25,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie> {
 
@@ -33,10 +36,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private static final String TAG = MovieService.class.getName();
 
 
+    @BindView(R.id.movie_image) protected ImageView imageView;
+    @BindView(R.id.rating_stars) protected RatingBar ratingBar;
+    @BindView(R.id.release_date_value) protected TextView releaseDate;
+    @BindView(R.id.movie_title_value) protected TextView movieTitle;
+    @BindView(R.id.movie_overview_value) protected TextView movieOverview;
+    @BindView(R.id.rating_description) protected TextView ratingDescription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
         if (!NetworkChecker.isNetworkConnected(this)) {
             Log.e(TAG, "No network available");
@@ -107,20 +118,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 super.deliverResult(data);
             }
         };
-
-
     }
 
     @Override
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
-
-        // TODO: Butterknife
-        ImageView imageView = findViewById(R.id.movie_image);
-        RatingBar ratingBar = findViewById(R.id.rating_stars);
-        TextView releaseDate = findViewById(R.id.release_date_value);
-        TextView movieTitle = findViewById(R.id.movie_title_value);
-        TextView movieOverview = findViewById(R.id.movie_overview_value);
-        TextView ratingDescription = findViewById(R.id.rating_description);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

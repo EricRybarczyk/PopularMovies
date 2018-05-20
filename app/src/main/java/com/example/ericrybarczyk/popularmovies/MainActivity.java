@@ -26,6 +26,9 @@ import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MovieAdapterOnClickHandler,
@@ -39,10 +42,14 @@ public class MainActivity extends AppCompatActivity implements
     private MovieAdapter movieAdapter;
     private String sortPreference;
 
+    @BindView(R.id.rv_movies) protected RecyclerView recyclerView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         if (!NetworkChecker.isNetworkConnected(this)) {
             Log.e(TAG, "No network available");
@@ -53,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements
         setPreferences();
 
         // set up the RecyclerView and layout
-        // TODO - butterknife
-        RecyclerView recyclerView = findViewById(R.id.rv_movies);
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
 
         recyclerView.setLayoutManager(layoutManager);
@@ -117,9 +122,7 @@ public class MainActivity extends AppCompatActivity implements
             @Nullable
             @Override
             public List<Movie> loadInBackground() {
-
                 MovieService movieService = new MovieService(new ApiKeyUtil(getResources()).getApiKey());
-
                 return movieService.getMovies(sortPreference);
             }
 
