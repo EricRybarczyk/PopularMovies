@@ -109,11 +109,10 @@ public class MovieService {
     }
 
 
-    // TODO - review how I use this and make sure it is as I intended for error conditions
     public Movie getErrorMovie() {
         int id = -1;
         String title = "Unknown Movie";
-        String img = "missing.jpg"; // TODO - figure out how to handle this in Picasso
+        String img = "missing.jpg";
         String overview = "The requested movie could not be located.";
         Date relDate = new Date();
         double userRating = 0.0;
@@ -138,9 +137,6 @@ public class MovieService {
 
         return url;
     }
-
-
-
 
     /*
         This method is directly derived from method getResponseFromHttpUrl(URL url) from

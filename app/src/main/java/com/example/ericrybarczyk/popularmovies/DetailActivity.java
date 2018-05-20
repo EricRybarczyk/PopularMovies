@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -42,6 +43,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.movie_title_value) protected TextView movieTitle;
     @BindView(R.id.movie_overview_value) protected TextView movieOverview;
     @BindView(R.id.rating_description) protected TextView ratingDescription;
+    @BindView(R.id.rating_label) protected TextView ratingLabel;
+    @BindView(R.id.release_date_label) protected TextView releaseDateLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +126,17 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Movie> loader, Movie data) {
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int maxImageWidth = (displayMetrics.widthPixels / 2);
-        imageView.setMaxWidth(maxImageWidth);
+        // see if we got the error movie object back
+        if (data.getId() == -1) {
+            movieTitle.setText(R.string.error_movie_title);
+            movieOverview.setText(R.string.error_movie_description);
+            imageView.setVisibility(View.GONE);
+            ratingLabel.setVisibility(View.GONE);
+            ratingBar.setVisibility(View.GONE);
+            releaseDateLabel.setVisibility(View.GONE);
+            releaseDate.setVisibility(View.GONE);
+            return;
+        }
 
         ratingBar.setRating((float)(data.getUserRating() / 2));
         releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
@@ -136,10 +146,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
         ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
 
-        // TODO - improve Picasso use - use error() and placeholder()
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int maxImageWidth = (displayMetrics.widthPixels / 2);
+        imageView.setMaxWidth(maxImageWidth);
+
         Picasso.with(this)
                 .load(data.getImagePath())
                 .placeholder(R.drawable.ic_movie_placeholder)
+                .error(R.drawable.placeholder_movie_black_18dp)
                 .into(imageView);
     }
 
