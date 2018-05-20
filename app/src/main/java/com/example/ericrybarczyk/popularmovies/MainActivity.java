@@ -4,13 +4,13 @@ package com.example.ericrybarczyk.popularmovies;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
+import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 
 import java.util.List;
 
@@ -42,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Log.e(TAG, "No network available");
+            NetworkChecker.getNoNetworkToastMessage(this).show();
+            return;
+        }
+
         setPreferences();
 
         // set up the RecyclerView and layout
@@ -69,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
+
 
     private void loadMovieData(boolean refresh) {
 

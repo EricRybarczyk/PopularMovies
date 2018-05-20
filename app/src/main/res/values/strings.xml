@@ -21,4 +21,7 @@
     <string name="label_release_date">RELEASE DATE</string>
     <string name="rating_description_text">%1$s out of 5 stars</string>
 
+    <!-- Error message strings -->
+    <string name="error_message_no_network">No Network Available. Please check your settings and try again.</string>
+
 </resources>

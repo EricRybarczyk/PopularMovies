@@ -7,7 +7,7 @@ public class Movie {
     private int id;
     private String title;
     private String imagePath;
-    private String backdropPath;
+    private String backdropPath; // TODO - remove backdrop since I am not using it
     private String overview;
     private double userRating;
     private Date releaseDate;

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
+import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -36,6 +37,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Log.e(TAG, "No network available");
+            NetworkChecker.getNoNetworkToastMessage(this).show();
+            return;
+        }
 
 
         Intent starter = getIntent();

@@ -24,8 +24,6 @@ public class MovieService {
 
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
-//    private static final String MOVIE_API_POPULAR = "popular";
-//    private static final String MOVIE_API_TOP = "top_rated";
     private static final String QUERY_API_KEY = "api_key";
     private static final String JSON_KEY_RESULTS = "results";
     private static final String JSON_KEY_MOVIE_ID = "id";
@@ -83,9 +81,6 @@ public class MovieService {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
-
-
 
         return movies;
     }
