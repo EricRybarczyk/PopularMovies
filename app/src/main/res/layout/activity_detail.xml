@@ -69,16 +69,30 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/release_date_label"
+            android:id="@+id/rating_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/movie_image"
+            app:layout_constraintTop_toBottomOf="@+id/rating_container"
+            tools:text="N.n out of 5 stars"/>
+
+        <TextView
+            android:id="@+id/release_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:paddingTop="32dp"
             android:text="@string/label_release_date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
-            app:layout_constraintTop_toBottomOf="@+id/rating_container" />
+            app:layout_constraintTop_toBottomOf="@+id/rating_description" />
 
         <TextView
             android:id="@+id/release_date_value"
@@ -117,6 +131,7 @@
             android:layout_marginTop="12dp"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_title_value"

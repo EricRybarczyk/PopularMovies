@@ -20,6 +20,7 @@ import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -112,6 +113,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         TextView releaseDate = findViewById(R.id.release_date_value);
         TextView movieTitle = findViewById(R.id.movie_title_value);
         TextView movieOverview = findViewById(R.id.movie_overview_value);
+        TextView ratingDescription = findViewById(R.id.rating_description);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -122,7 +124,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
         movieTitle.setText(data.getTitle());
         movieOverview.setText(data.getOverview());
-
+        String ratingString = (new DecimalFormat("0.##")).format( (data.getUserRating() / 2) );
+        String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
+        ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
 
         // TODO - improve Picasso use - use error() and placeholder()
         Picasso.with(this)
