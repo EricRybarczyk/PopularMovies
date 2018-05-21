@@ -12,12 +12,11 @@ public class NetworkChecker {
     // directly adapted from https://stackoverflow.com/a/4009133/798642 as recommended by Udacity for this project
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connectivityManager != null) {
-            networkInfo = connectivityManager.getActiveNetworkInfo();
-            return networkInfo != null && networkInfo.isConnected();
+        if (connectivityManager == null) {
+            return false;
         }
-        return false;
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return (networkInfo != null) && (networkInfo.isConnected());
     }
 
     public static Toast getNoNetworkToastMessage(Context context) {

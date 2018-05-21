@@ -20,7 +20,7 @@ import butterknife.OnClick;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
     private List<Movie> movieList;
-    private Context parentContext;
+    private final Context parentContext;
     private final MovieAdapterOnClickHandler movieItemClickHandler;
 
     public interface MovieAdapterOnClickHandler {
@@ -70,7 +70,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
 
         @BindView(R.id.iv_movie_item) protected ImageView movieImageView;
 
-        public MovieHolder(View itemView) {
+        MovieHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

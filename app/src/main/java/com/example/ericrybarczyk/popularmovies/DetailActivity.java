@@ -97,7 +97,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         return new AsyncTaskLoader<Movie>(this) {
 
             private Movie cachedMovie;
-            int movieId = args.getInt(BUNDLE_KEY_MOVIE_ID);
+            final int movieId = args.getInt(BUNDLE_KEY_MOVIE_ID);
 
             @Override
             protected void onStartLoading() {
@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public void onLoadFinished(Loader<Movie> loader, Movie data) {
+    public void onLoadFinished(@NonNull Loader<Movie> loader, Movie data) {
 
         // see if we got the error movie object back
         if (data.getId() == -1) {
@@ -159,7 +159,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<Movie> loader) {
+    public void onLoaderReset(@NonNull Loader<Movie> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
     }
 }

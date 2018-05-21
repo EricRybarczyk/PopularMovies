@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 public class ApiKeyUtil {
 
-    private Resources resources;
+    private final Resources resources;
 
     private static final String TAG = ApiKeyUtil.class.getSimpleName();
 

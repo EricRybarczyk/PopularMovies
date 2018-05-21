@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class MovieService {
+class MovieService {
 
     private static final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/movie";
     private static final String MOVIE_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
@@ -29,14 +29,13 @@ public class MovieService {
     private static final String JSON_KEY_MOVIE_ID = "id";
     private static final String JSON_KEY_TITLE = "title";
     private static final String JSON_KEY_POSTER = "poster_path";
-    private static final String JSON_KEY_BACKDROP = "backdrop_path";
     private static final String JSON_KEY_OVERVIEW = "overview";
     private static final String JSON_KEY_RELEASE_DATE = "release_date";
     private static final String JSON_KEY_DATE_FORMAT = "yyyy-MM-dd";
     private static final String JSON_KEY_USER_RATING = "vote_average";
     private static final String TAG = MovieService.class.getName();
 
-    private String movieApiKey;
+    private final String movieApiKey;
 
 
     public MovieService(String movieApiKey) {
@@ -44,7 +43,7 @@ public class MovieService {
     }
 
 
-    protected List<Movie> getMovies(String sortPreference) {
+    List<Movie> getMovies(String sortPreference) {
         String rawMovieData = null;
         ArrayList<Movie> movies = new ArrayList<>();
 
@@ -85,7 +84,7 @@ public class MovieService {
     }
 
 
-    protected Movie getMovie(int movieId) {
+    Movie getMovie(int movieId) {
 
         URL movieServiceUrl = buildUrl(movieApiKey, String.valueOf(movieId));
 
@@ -109,7 +108,7 @@ public class MovieService {
     }
 
 
-    public Movie getErrorMovie() {
+    private Movie getErrorMovie() {
         int id = -1;
         String title = "Unknown Movie";
         String img = "missing.jpg";
@@ -159,11 +158,11 @@ public class MovieService {
         }
         catch (IOException e) {
             Log.e(TAG, e.getMessage());
-            throw e; // TODO - make sure this is an acceptable way to rethrow the exception after logging it
+            throw e;
         }
         catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            throw e; // TODO - make sure this is an acceptable way to rethrow the exception after logging it
+            Log.e(TAG, e.getClass().getSimpleName() + " - " + e.getMessage());
+            throw e;
         }
         finally {
             urlConnection.disconnect();
