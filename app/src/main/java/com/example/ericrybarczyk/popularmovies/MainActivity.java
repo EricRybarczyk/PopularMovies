@@ -1,14 +1,12 @@
 package com.example.ericrybarczyk.popularmovies;
 
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -20,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
-import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 
@@ -102,37 +99,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    @SuppressLint("StaticFieldLeak") // TODO - figure out how to do this correctly instead of SuppressLint - solve the root problem
     @NonNull
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<List<Movie>>(this) {
-
-            private List<Movie> cachedMovies;
-
-            @Override
-            protected void onStartLoading() {
-                if (cachedMovies != null) {
-                    deliverResult(cachedMovies);
-                } else {
-                    forceLoad();
-                }
-            }
-
-            @Nullable
-            @Override
-            public List<Movie> loadInBackground() {
-                MovieService movieService = new MovieService(new ApiKeyUtil(getResources()).getApiKey());
-                return movieService.getMovies(sortPreference);
-            }
-
-            @Override
-            public void deliverResult(@Nullable List<Movie> data) {
-                cachedMovies = data;
-                super.deliverResult(data);
-            }
-        };
+        return new MovieListAsyncTaskLoader(this, sortPreference);
     }
+
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<Movie>> loader, List<Movie> data) {

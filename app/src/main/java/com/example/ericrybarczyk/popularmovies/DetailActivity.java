@@ -89,38 +89,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
-    @SuppressLint("StaticFieldLeak") // TODO - figure out how to do this correctly instead of SuppressLint - solve the root problem
     @NonNull
     @Override
     public Loader<Movie> onCreateLoader(int id, Bundle args) {
-
-        return new AsyncTaskLoader<Movie>(this) {
-
-            private Movie cachedMovie;
-            final int movieId = args.getInt(BUNDLE_KEY_MOVIE_ID);
-
-            @Override
-            protected void onStartLoading() {
-                if (cachedMovie != null) {
-                    deliverResult(cachedMovie);
-                } else {
-                    forceLoad();
-                }
-            }
-
-            @Nullable
-            @Override
-            public Movie loadInBackground() {
-                MovieService movieService = new MovieService(new ApiKeyUtil(getResources()).getApiKey());
-                return movieService.getMovie(movieId);
-            }
-
-            @Override
-            public void deliverResult(@Nullable Movie data) {
-                cachedMovie = data;
-                super.deliverResult(data);
-            }
-        };
+        int movieId = args.getInt(BUNDLE_KEY_MOVIE_ID);
+        return new MovieAsyncTaskLoader(this, movieId);
     }
 
     @Override
