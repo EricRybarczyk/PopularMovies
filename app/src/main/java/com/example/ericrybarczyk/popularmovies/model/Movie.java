@@ -1,6 +1,7 @@
 package com.example.ericrybarczyk.popularmovies.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Movie {
 
@@ -10,6 +11,8 @@ public class Movie {
     private final String overview;
     private final double userRating;
     private final Date releaseDate;
+    private List<MovieReview> reviews;
+    private List<MovieTrailer> trailers;
 
     public Movie(int id, String title, String imagePath, String overview, Date releaseDate, double userRating) {
         this.id = id;
@@ -18,8 +21,8 @@ public class Movie {
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.userRating = userRating;
-    }
 
+    }
 
     public int getId() {
         return id;
@@ -42,4 +45,12 @@ public class Movie {
     }
 
     public double getUserRating() { return userRating; }
+
+    public List<MovieReview> getReviews() { return reviews; }
+
+    public void setReviews(List<MovieReview> reviews) { this.reviews = reviews; }
+
+    public List<MovieTrailer> getTrailers() { return trailers; }
+
+    public void setTrailers(List<MovieTrailer> trailers) { this.trailers = trailers; }
 }

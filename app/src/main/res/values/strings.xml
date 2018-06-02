@@ -22,5 +22,6 @@
     <string name="error_message_no_network">No Network Available. Please check your settings and try again.</string>
     <string name="error_movie_title">Movie Not Found</string>
     <string name="error_movie_description">The movie you requested was not found. You will not enjoy watching a movie that does not exist. Maybe you should pick a different movie. Star Wars is always good.</string>
+    <string name="error_movie_poster">missing.jpg</string>
 
 </resources>
