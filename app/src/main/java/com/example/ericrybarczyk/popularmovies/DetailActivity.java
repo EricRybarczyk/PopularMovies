@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
+import com.example.ericrybarczyk.popularmovies.utils.FontManager;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 import com.squareup.picasso.Picasso;
@@ -45,6 +46,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.rating_description) protected TextView ratingDescription;
     @BindView(R.id.rating_label) protected TextView ratingLabel;
     @BindView(R.id.release_date_label) protected TextView releaseDateLabel;
+    @BindView(R.id.trailers_text_icon) protected TextView trailersTextIcon;
+    @BindView(R.id.trailers_text_value) protected TextView trailersLabel;
+    @BindView(R.id.reviews_text_icon) protected TextView reviewsTextIcon;
+    @BindView(R.id.reviews_text_value) protected TextView reviewsLabel;
+    @BindView(R.id.favorite_text_icon) protected TextView favoriteTextIcon;
+    @BindView(R.id.favorite_text_value) protected TextView favoriteLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +65,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
-
         Intent starter = getIntent();
         if (starter != null) {
             int movieId;
@@ -70,6 +76,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             loadMovieDetail(movieId, false);
+
+            // trailers and reviews widget setup
+            trailersTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
+            reviewsTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
+            // TODO: adjust font face if current movie is marked as user favorite
+            favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
         }
     }
 

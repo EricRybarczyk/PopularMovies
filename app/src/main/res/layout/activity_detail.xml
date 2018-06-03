@@ -80,7 +80,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
             app:layout_constraintTop_toBottomOf="@+id/rating_container"
-            tools:text="N.n out of 5 stars"/>
+            tools:text="@string/tools_rating_description"/>
 
         <TextView
             android:id="@+id/release_date_label"
@@ -105,8 +105,37 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
             app:layout_constraintTop_toBottomOf="@+id/release_date_label"
-            tools:text="JAN 1, 2018"/>
+            tools:text="@string/tools_release_date_value"/>
 
+        <LinearLayout
+            android:id="@+id/favorite_layout_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintStart_toEndOf="@+id/movie_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/release_date_value"
+            app:layout_constraintBottom_toTopOf="@id/movie_title_value">
+
+            <TextView
+                android:id="@+id/favorite_text_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:textSize="26sp"
+                android:text="@string/fa_icon_bookmark_disabled"/>
+            <TextView
+                android:id="@+id/favorite_text_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textSize="18sp"
+                android:text="@string/favorite_text_value"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/movie_title_value"
@@ -114,13 +143,13 @@
             android:layout_height="wrap_content"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_image"
-            tools:text="Movie Title Goes Here" />
+            tools:text="@string/tools_movie_title" />
 
         <TextView
             android:id="@+id/movie_overview_value"
@@ -136,7 +165,85 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_title_value"
-            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " />
+            tools:text="@string/tools_movie_description" />
+
+        <ImageView
+            android:id="@+id/divider_line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_overview_value"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:contentDescription="@string/aria_divider_line" />
+
+        <LinearLayout
+            android:id="@+id/trailers_layout_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="8dp"
+            android:paddingBottom="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reviews_layout_container"
+            app:layout_constraintTop_toBottomOf="@id/divider_line">
+
+            <TextView
+                android:id="@+id/trailers_text_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="8dp"
+                android:textSize="30sp"
+                android:text="@string/fa_icon_video" />
+            <TextView
+                android:id="@+id/trailers_text_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textSize="20sp"
+                android:text="@string/trailers_text_value" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/reviews_layout_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="8dp"
+            android:paddingBottom="24dp"
+            app:layout_constraintStart_toEndOf="@id/trailers_layout_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_line">
+
+            <TextView
+                android:id="@+id/reviews_text_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="8dp"
+                android:textSize="30sp"
+                android:text="@string/fa_icon_thumbs_up"/>
+            <TextView
+                android:id="@+id/reviews_text_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textSize="20sp"
+                android:text="@string/reviews_text_value"/>
+
+        </LinearLayout>
 
 
     </android.support.constraint.ConstraintLayout>

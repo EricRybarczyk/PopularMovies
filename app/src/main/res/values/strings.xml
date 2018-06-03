@@ -17,11 +17,28 @@
     <string name="label_rating">RATING</string>
     <string name="label_release_date">RELEASE DATE</string>
     <string name="rating_description_text">%1$s out of 5 stars</string>
+    <string name="favorite_toggle_value">Favorite</string>
 
     <!-- Error message strings -->
     <string name="error_message_no_network">No Network Available. Please check your settings and try again.</string>
     <string name="error_movie_title">Movie Not Found</string>
     <string name="error_movie_description">The movie you requested was not found. You will not enjoy watching a movie that does not exist. Maybe you should pick a different movie. Star Wars is always good.</string>
     <string name="error_movie_poster">missing.jpg</string>
+
+    <string name="aria_divider_line">divider line</string>
+
+    <string name="tools_movie_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+    <string name="tools_movie_title">Movie Title Goes Here</string>
+    <string name="tools_release_date_value">JAN 1, 2018</string>
+    <string name="tools_rating_description">N.n out of 5 stars</string>
+
+    <!-- trailers and reviews section -->
+    <string name="trailers_text_value">TRAILERS</string>
+    <string name="reviews_text_value">REVIEWS</string>
+    <string name="favorite_text_value">FAVORITE</string>
+    <string name="fa_icon_thumbs_up">&#xf164;</string>
+    <string name="fa_icon_video">&#xf03d;</string>
+    <string name="fa_icon_bookmark_enabled">&#xf02e;</string>
+    <string name="fa_icon_bookmark_disabled">&#xf02e;</string>
 
 </resources>
