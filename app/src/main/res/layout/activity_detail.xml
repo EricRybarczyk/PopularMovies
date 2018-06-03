@@ -31,56 +31,63 @@
             tools:layout_height="300dp"/>
         <!-- placeholder image licensed free for personal use: https://www.kisspng.com/png-photographic-film-reel-clip-art-movie-film-173787/ -->
 
-
-        <TextView
-            android:id="@+id/rating_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/label_rating"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/movie_image"
-            app:layout_constraintTop_toTopOf="parent" /><!-- android:textAppearance="@style/TextAppearance.AppCompat.Caption"-->
-
-
         <!-- TODO: figure out if this LinearLayout is really necessary around the RatingBar -->
         <LinearLayout
             android:id="@+id/rating_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
-            app:layout_constraintTop_toBottomOf="@+id/rating_label"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/release_date_label"
             android:layout_marginEnd="4dp"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp">
+
+            <TextView
+                android:id="@+id/rating_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="0dp"
+                android:text="@string/label_rating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/movie_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/rating_container"/><!-- android:textAppearance="@style/TextAppearance.AppCompat.Caption"-->
 
             <RatingBar
                 android:id="@+id/rating_stars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
                 android:isIndicator="true"
                 android:stepSize="0.1"
                 android:scaleX="0.6"
                 android:scaleY="0.6" />
 
+            <TextView
+                android:id="@+id/rating_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/movie_image"
+                app:layout_constraintTop_toBottomOf="@+id/rating_container"
+                app:layout_constraintBottom_toTopOf="@id/release_date_label"
+                tools:text="@string/tools_rating_description"/>
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/rating_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/movie_image"
-            app:layout_constraintTop_toBottomOf="@+id/rating_container"
-            tools:text="@string/tools_rating_description"/>
+
 
         <TextView
             android:id="@+id/release_date_label"
@@ -89,11 +96,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
-            android:paddingTop="32dp"
+            android:paddingTop="8dp"
             android:text="@string/label_release_date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
-            app:layout_constraintTop_toBottomOf="@+id/rating_description" />
+            app:layout_constraintTop_toBottomOf="@+id/rating_container"
+            app:layout_constraintBottom_toTopOf="@+id/release_date_value"/>
 
         <TextView
             android:id="@+id/release_date_value"
@@ -101,10 +109,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
             app:layout_constraintTop_toBottomOf="@+id/release_date_label"
+            app:layout_constraintBottom_toTopOf="@id/favorite_layout_container"
             tools:text="@string/tools_release_date_value"/>
 
         <LinearLayout
@@ -113,8 +122,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="6dp"
             app:layout_constraintStart_toEndOf="@+id/movie_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/release_date_value"
