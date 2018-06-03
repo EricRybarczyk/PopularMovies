@@ -31,7 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie> {
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie>, View.OnClickListener {
 
     private static final int MOVIE_LOADER = 5291;
     private static final String BUNDLE_KEY_MOVIE_ID = "movie_id";
@@ -82,7 +82,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             reviewsTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
             // TODO: adjust font face if current movie is marked as user favorite
             favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
+
+            setClickHandlers();
         }
+    }
+
+    private void setClickHandlers() {
+        trailersTextIcon.setOnClickListener(this);
+        trailersLabel.setOnClickListener(this);
+        reviewsTextIcon.setOnClickListener(this);
+        reviewsLabel.setOnClickListener(this);
+        favoriteTextIcon.setOnClickListener(this);
+        favoriteLabel.setOnClickListener(this);
     }
 
     private void loadMovieDetail(int movieId, boolean refresh) {
@@ -147,4 +158,28 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoaderReset(@NonNull Loader<Movie> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.trailers_text_icon:
+            case R.id.trailers_text_value:
+                // TODO - show toast message if movie has no trailers
+                // TODO - 
+                break;
+            case R.id.reviews_text_icon:
+            case R.id.reviews_text_value:
+                // TODO
+                break;
+            case R.id.favorite_text_icon:
+            case R.id.favorite_text_value:
+                toggleFavorite();
+                break;
+        }
+    }
+
+    private void toggleFavorite() {
+        // TODO - implement toggleFavorite()
+    }
+
 }

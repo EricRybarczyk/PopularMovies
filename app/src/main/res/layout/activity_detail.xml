@@ -131,13 +131,17 @@
 
             <TextView
                 android:id="@+id/favorite_text_icon"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:textSize="26sp"
-                android:text="@string/fa_icon_bookmark_disabled"/>
+                android:text="@string/fa_icon_bookmark_disabled" />
             <TextView
                 android:id="@+id/favorite_text_value"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
@@ -204,6 +208,8 @@
 
             <TextView
                 android:id="@+id/trailers_text_icon"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -213,6 +219,8 @@
                 android:text="@string/fa_icon_video" />
             <TextView
                 android:id="@+id/trailers_text_value"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -236,6 +244,8 @@
 
             <TextView
                 android:id="@+id/reviews_text_icon"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -245,6 +255,8 @@
                 android:text="@string/fa_icon_thumbs_up"/>
             <TextView
                 android:id="@+id/reviews_text_value"
+                android:clickable="true"
+                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
