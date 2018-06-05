@@ -1,12 +1,9 @@
 package com.example.ericrybarczyk.popularmovies;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -17,7 +14,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
-import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import com.example.ericrybarczyk.popularmovies.utils.FontManager;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
@@ -34,9 +30,8 @@ import butterknife.ButterKnife;
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie>, View.OnClickListener {
 
     private static final int MOVIE_LOADER = 5291;
-    private static final String BUNDLE_KEY_MOVIE_ID = "movie_id";
     private static final String TAG = MovieService.class.getName();
-
+    private Movie loadedMovie;
 
     @BindView(R.id.movie_image) protected ImageView imageView;
     @BindView(R.id.rating_stars) protected RatingBar ratingBar;
@@ -68,10 +63,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         Intent starter = getIntent();
         if (starter != null) {
             int movieId;
-            if (starter.hasExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID)) {
-                movieId = starter.getIntExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID, 0);
+            if (starter.hasExtra(MovieAppConstants.KEY_MOVIE_ID)) {
+                movieId = starter.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, 0);
             } else {
-                Log.e(TAG, "Missing expected data: " + MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID);
+                Log.e(TAG, "Missing expected data: " + MovieAppConstants.KEY_MOVIE_ID);
                 movieId = -1;
             }
 
@@ -98,7 +93,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private void loadMovieDetail(int movieId, boolean refresh) {
         Bundle bundle = new Bundle();
-        bundle.putInt(BUNDLE_KEY_MOVIE_ID, movieId);
+        bundle.putInt(MovieAppConstants.KEY_MOVIE_ID, movieId);
 
         LoaderManager loaderManager = getSupportLoaderManager();
 
@@ -115,12 +110,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @NonNull
     @Override
     public Loader<Movie> onCreateLoader(int id, Bundle args) {
-        int movieId = args.getInt(BUNDLE_KEY_MOVIE_ID);
+        int movieId = args.getInt(MovieAppConstants.KEY_MOVIE_ID);
         return new MovieAsyncTaskLoader(this, movieId);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Movie> loader, Movie data) {
+
+        loadedMovie = data; // set a reference for the click event handlers
 
         // see if we got the error movie object back
         if (data.getId() == -1) {
@@ -164,12 +161,19 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         switch (v.getId()) {
             case R.id.trailers_text_icon:
             case R.id.trailers_text_value:
-                // TODO - show toast message if movie has no trailers
-                // TODO - 
+                Class trailersActivity = TrailerListActivity.class;
+                Intent trailersIntent = new Intent(this, trailersActivity);
+                trailersIntent.putExtra(MovieAppConstants.KEY_MOVIE_ID, loadedMovie.getId());
+                trailersIntent.putExtra(MovieAppConstants.KEY_MOVIE_TITLE, loadedMovie.getTitle());
+                startActivity(trailersIntent);
                 break;
             case R.id.reviews_text_icon:
             case R.id.reviews_text_value:
-                // TODO
+                Class reviewsActivity = ReviewsListActivity.class;
+                Intent reviewsIntent = new Intent(this, reviewsActivity);
+                reviewsIntent.putExtra(MovieAppConstants.KEY_MOVIE_ID, loadedMovie.getId());
+                reviewsIntent.putExtra(MovieAppConstants.KEY_MOVIE_TITLE, loadedMovie.getTitle());
+                startActivity(reviewsIntent);
                 break;
             case R.id.favorite_text_icon:
             case R.id.favorite_text_value:

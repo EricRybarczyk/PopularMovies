@@ -1,9 +1,9 @@
 package com.example.ericrybarczyk.popularmovies.model;
 
 public class MovieReview {
+    private String id;
     private String author;
     private String content;
-    private String id;
 
     public MovieReview(String id, String author, String content) {
         this.id = id;

@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onClick(int movieId) {
         Class destination = DetailActivity.class;
         Intent intentToStart = new Intent(this, destination);
-        intentToStart.putExtra(MovieAppConstants.INTENT_EXTRA_KEY_MOVIE_ID, movieId);
+        intentToStart.putExtra(MovieAppConstants.KEY_MOVIE_ID, movieId);
         startActivity(intentToStart);
     }
 

@@ -9,6 +9,7 @@ import com.example.ericrybarczyk.popularmovies.model.MovieReview;
 import com.example.ericrybarczyk.popularmovies.model.MovieTrailer;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -114,31 +115,25 @@ class MovieService {
             Date releaseDate = (new SimpleDateFormat(JSON_KEY_DATE_FORMAT, Locale.getDefault()))
                     .parse(jsonMovie.getString(JSON_KEY_RELEASE_DATE));
             double userRating = jsonMovie.getDouble(JSON_KEY_USER_RATING);
-            List<MovieReview> reviews = new ArrayList<>();
-            List<MovieTrailer> trailers = new ArrayList<>();
 
-            Movie requestedMovie = new Movie(movieId, title, posterPath, overview, releaseDate, userRating);
+            return new Movie(movieId, title, posterPath, overview, releaseDate, userRating);
 
-            // get reviews for the movie
-            URL reviewsUrl = buildMoreDetailsUrl(movieApiKey, API_PATH_REVIEWS_SUFFIX, movieId);
-            JSONObject jsonReviewsResult = new JSONObject(getMovieData(reviewsUrl));
-            JSONArray jsonReviews = jsonReviewsResult.getJSONArray(JSON_KEY_REVIEWS_RESULTS);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        // return a default movie object to represent error condition in a graceful way
+        return getErrorMovie();
+    }
 
-            for (int i = 0; i < jsonReviews.length(); i++) {
-                JSONObject jsonReview = new JSONObject(jsonReviews.getString(i));
-                String id = jsonReview.getString(JSON_KEY_REVIEWS_ID);
-                String author = jsonReview.getString(JSON_KEY_REVIEWS_AUTHOR);
-                String content = jsonReview.getString(JSON_KEY_REVIEWS_CONTENT);
-                reviews.add(new MovieReview(id, author, content));
-            }
+    // get trailers for the movie
+    public List<MovieTrailer> getTrailers(int movieId) {
 
-            requestedMovie.setReviews(reviews);
+        List<MovieTrailer> trailers = new ArrayList<>();
+        URL trailersUrl = buildMoreDetailsUrl(movieApiKey, API_PATH_TRAILERS_SUFFIX, movieId);
 
-            // get trailers for the movie
-            URL trailersUrl = buildMoreDetailsUrl(movieApiKey, API_PATH_TRAILERS_SUFFIX, movieId);
+        try {
             JSONObject jsonTrailersResult = new JSONObject(getMovieData(trailersUrl));
             JSONArray jsonTrailers = jsonTrailersResult.getJSONArray(JSON_KEY_TRAILERS_RESULTS);
-
             for (int i = 0; i < jsonTrailers.length(); i++) {
                 JSONObject jsonTrailer = new JSONObject(jsonTrailers.getString(i));
                 String id = jsonTrailer.getString(JSON_KEY_TRAILERS_ID);
@@ -148,16 +143,33 @@ class MovieService {
                 String type = jsonTrailer.getString(JSON_KEY_TRAILERS_TYPE);
                 trailers.add(new MovieTrailer(id, key, name, site, type));
             }
-
-            requestedMovie.setTrailers(trailers);
-
-            return requestedMovie;
-
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+            // return collection will be empty which is acceptable for an error condition
         }
-        // return a default movie object to represent error condition in a graceful way
-        return getErrorMovie();
+        return trailers;
+    }
+
+    // get reviews for the movie
+    public List<MovieReview> getReviews(int movieId) {
+
+        List<MovieReview> reviews = new ArrayList<>();
+        URL reviewsUrl = buildMoreDetailsUrl(movieApiKey, API_PATH_REVIEWS_SUFFIX, movieId);
+        try {
+            JSONObject jsonReviewsResult = new JSONObject(getMovieData(reviewsUrl));
+            JSONArray jsonReviews = jsonReviewsResult.getJSONArray(JSON_KEY_REVIEWS_RESULTS);
+            for (int i = 0; i < jsonReviews.length(); i++) {
+                JSONObject jsonReview = new JSONObject(jsonReviews.getString(i));
+                String id = jsonReview.getString(JSON_KEY_REVIEWS_ID);
+                String author = jsonReview.getString(JSON_KEY_REVIEWS_AUTHOR);
+                String content = jsonReview.getString(JSON_KEY_REVIEWS_CONTENT);
+                reviews.add(new MovieReview(id, author, content));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            // return collection will be empty which is acceptable for an error condition
+        }
+        return reviews;
     }
 
 

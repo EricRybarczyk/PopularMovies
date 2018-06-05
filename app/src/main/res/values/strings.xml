@@ -24,6 +24,8 @@
     <string name="error_movie_title">Movie Not Found</string>
     <string name="error_movie_description">The movie you requested was not found. You will not enjoy watching a movie that does not exist. Maybe you should pick a different movie. Star Wars is always good.</string>
     <string name="error_movie_poster">missing.jpg</string>
+    <string name="error_movie_no_trailers_message">This movie has no trailers available.</string>
+    <string name="error_movie_no_reviews_message">This movie has no reviews available.</string>
 
     <string name="aria_divider_line">divider line</string>
 
