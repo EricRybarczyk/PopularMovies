@@ -8,11 +8,19 @@
     tools:context=".TrailerListActivity"
     android:background="@drawable/background_detail">
 
+    <!-- TODO - consider a ConstraintLayout around the text & list views if things need to lay out better-->
+
     <TextView
-        android:id="@+id/temp_test_text"
+        android:id="@+id/movie_title_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="temp test"/>
+        tools:text="@string/tools_movie_title"/>
 
+    <ListView
+        android:id="@+id/trailers_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
 
 </ScrollView>

@@ -42,6 +42,7 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
         } catch (Exception e) {
             Log.e(TrailerListActivity.class.getSimpleName(), e.getMessage());
         } // TODO - remove above temp stuff
+        
 
     }
 
