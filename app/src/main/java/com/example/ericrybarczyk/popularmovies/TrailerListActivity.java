@@ -8,6 +8,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.MovieTrailer;
@@ -23,7 +25,8 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
     private static final int TRAILER_LOADER = 8675309;
     private static final String TAG = TrailerListActivity.class.getSimpleName();
     int movieId;
-    @BindView(R.id.temp_test_text) protected TextView tempTextView;;
+    @BindView(R.id.movie_title_value) protected TextView movieTitle;
+    @BindView(R.id.trailers_list) protected ListView trailersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,17 +35,15 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
         ButterKnife.bind(this);
         movieId = -1;
 
-        // TODO - remove this temp stuff
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity.hasExtra(MovieAppConstants.KEY_MOVIE_ID)) {
             movieId = intentThatStartedThisActivity.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, -1);
         }
-        try {
-            tempTextView.setText(String.valueOf(movieId));
-        } catch (Exception e) {
-            Log.e(TrailerListActivity.class.getSimpleName(), e.getMessage());
-        } // TODO - remove above temp stuff
-        
+        if (intentThatStartedThisActivity.hasExtra(MovieAppConstants.KEY_MOVIE_TITLE)) {
+            movieTitle.setText(intentThatStartedThisActivity.getStringExtra(MovieAppConstants.KEY_MOVIE_TITLE));
+        }
+
+        loadTrailers(movieId);
 
     }
 
@@ -68,10 +69,13 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(@NonNull Loader<List<MovieTrailer>> loader, List<MovieTrailer> data) {
         // TODO - need an adapter to bind the result data
+        TrailerAdapter trailerAdapter = new TrailerAdapter(this, R.layout.trailer_list_item, data);
+        trailersList.setAdapter(trailerAdapter);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<List<MovieTrailer>> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
     }
+
 }

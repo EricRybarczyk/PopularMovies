@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,19 +8,20 @@
     tools:context=".TrailerListActivity"
     android:background="@drawable/background_detail">
 
-    <!-- TODO - consider a ConstraintLayout around the text & list views if things need to lay out better-->
-
     <TextView
         android:id="@+id/movie_title_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textSize="28sp"
+        android:textColor="@color/colorPrimaryDark"
         tools:text="@string/tools_movie_title"/>
 
     <ListView
         android:id="@+id/trailers_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movie_title_value"
+        android:paddingTop="12dp" />
 
-    </ListView>
-
-</ScrollView>
+</RelativeLayout>

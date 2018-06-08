@@ -26,6 +26,7 @@
     <string name="error_movie_poster">missing.jpg</string>
     <string name="error_movie_no_trailers_message">This movie has no trailers available.</string>
     <string name="error_movie_no_reviews_message">This movie has no reviews available.</string>
+    <string name="error_no_video_player">Your system is unable to play this video.</string>
 
     <string name="aria_divider_line">divider line</string>
 
@@ -33,6 +34,8 @@
     <string name="tools_movie_title">Movie Title Goes Here</string>
     <string name="tools_release_date_value">JAN 1, 2018</string>
     <string name="tools_rating_description">N.n out of 5 stars</string>
+    <string name="tools_trailer_list_item_name">Trailer Name Here</string>
+    <string name="tools_trailer_list_item_site_value">Source Site</string>
 
     <!-- trailers and reviews section -->
     <string name="trailers_text_value">TRAILERS</string>
@@ -42,5 +45,8 @@
     <string name="fa_icon_video">&#xf03d;</string>
     <string name="fa_icon_bookmark_enabled">&#xf02e;</string>
     <string name="fa_icon_bookmark_disabled">&#xf02e;</string>
+    <string name="youtube_trailer_thumbnail_base_url">https://img.youtube.com/vi/</string>
+    <string name="youtube_trailer_thumbnail_filename">hqdefault.jpg</string>
+    <string name="trailers_heading_label">Trailers:</string>
 
 </resources>
