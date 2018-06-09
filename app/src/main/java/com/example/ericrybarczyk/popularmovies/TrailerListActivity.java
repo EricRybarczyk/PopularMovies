@@ -27,6 +27,7 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
     private int movieId;
     @BindView(R.id.movie_title_value) protected TextView movieTitle;
     @BindView(R.id.trailers_list) protected ListView trailersList;
+    @BindView(R.id.no_trailers_message) protected TextView noTrailersMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +69,14 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<MovieTrailer>> loader, List<MovieTrailer> data) {
-        TrailerAdapter trailerAdapter = new TrailerAdapter(this, R.layout.trailer_list_item, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
-        trailersList.setAdapter(trailerAdapter);
+        if (data.isEmpty()) {
+            noTrailersMessage.setText(R.string.error_movie_no_trailers_message);
+            trailersList.setVisibility(View.GONE);
+        } else {
+            noTrailersMessage.setVisibility(View.GONE);
+            TrailerAdapter trailerAdapter = new TrailerAdapter(this, R.layout.trailer_list_item, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
+            trailersList.setAdapter(trailerAdapter);
+        }
     }
 
     @Override

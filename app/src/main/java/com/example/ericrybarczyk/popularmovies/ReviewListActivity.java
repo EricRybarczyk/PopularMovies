@@ -1,6 +1,7 @@
 package com.example.ericrybarczyk.popularmovies;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.design.widget.TabLayout;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.MovieReview;
@@ -70,9 +72,20 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
     // CREDIT for how to use the TabLayout as a paging indicator: https://stackoverflow.com/a/38459310/798642
     @Override
     public void onLoadFinished(@NonNull Loader<List<MovieReview>> loader, List<MovieReview> data) {
+        if (data.isEmpty()) {
+            data.add(new MovieReview(
+                    MovieAppConstants.NO_REVIEW_ID,
+                    MovieAppConstants.NO_REVIEW_AUTHOR,
+                    getString(R.string.error_movie_no_reviews_message)));
+        }
         ReviewAdapter reviewAdapter = new ReviewAdapter(this, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
         reviewPager.setAdapter(reviewAdapter);
-        pageIndicator.setupWithViewPager(reviewPager, true);
+        if (data.size() > 1) {
+            pageIndicator.setupWithViewPager(reviewPager, true);
+        } else {
+            pageIndicator.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

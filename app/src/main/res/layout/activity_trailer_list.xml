@@ -24,4 +24,12 @@
         android:layout_below="@id/movie_title_value"
         android:paddingTop="12dp" />
 
+    <TextView
+        android:id="@+id/no_trailers_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movie_title_value"
+        android:padding="8dp"
+        android:textSize="20sp" />
+
 </RelativeLayout>

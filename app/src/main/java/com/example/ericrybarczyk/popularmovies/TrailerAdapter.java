@@ -53,6 +53,7 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
         convertView.setTag(trailer.getKey());
         ButterKnife.bind(this, convertView);
 
+        // TODO - move hard-coded strings to Resources
         convertView.setOnClickListener(v -> {
             String trailerKey = v.getTag().toString();
             Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
