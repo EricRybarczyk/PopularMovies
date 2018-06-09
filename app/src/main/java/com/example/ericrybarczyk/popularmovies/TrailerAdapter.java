@@ -1,9 +1,7 @@
 package com.example.ericrybarczyk.popularmovies;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,8 +75,6 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
         trailerName.setText(trailer.getName());
         trailerSite.setText(trailer.getSite());
         String thumbnailImagePath = buildThumbnailImagePath(trailer);
-        Picasso.with(context).setIndicatorsEnabled(true);
-        Picasso.with(context).setLoggingEnabled(true);
         Picasso.with(context)
                 .load(thumbnailImagePath)
                 .placeholder(R.drawable.ic_movie_placeholder) // TODO - better placeholder for this image

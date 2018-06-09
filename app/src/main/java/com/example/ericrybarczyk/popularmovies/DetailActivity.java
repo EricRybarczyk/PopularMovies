@@ -169,7 +169,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 break;
             case R.id.reviews_text_icon:
             case R.id.reviews_text_value:
-                Class reviewsActivity = ReviewsListActivity.class;
+                Class reviewsActivity = ReviewListActivity.class;
                 Intent reviewsIntent = new Intent(this, reviewsActivity);
                 reviewsIntent.putExtra(MovieAppConstants.KEY_MOVIE_ID, loadedMovie.getId());
                 reviewsIntent.putExtra(MovieAppConstants.KEY_MOVIE_TITLE, loadedMovie.getTitle());
