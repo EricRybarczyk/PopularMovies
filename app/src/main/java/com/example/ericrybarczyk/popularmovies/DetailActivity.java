@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.FontManager;
@@ -32,6 +33,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private static final int MOVIE_LOADER = 5291;
     private static final String TAG = MovieService.class.getName();
     private Movie loadedMovie;
+    private boolean isFavorite;
 
     @BindView(R.id.movie_image) protected ImageView imageView;
     @BindView(R.id.rating_stars) protected RatingBar ratingBar;
@@ -76,7 +78,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             trailersTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
             reviewsTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
             // TODO: adjust font face if current movie is marked as user favorite
-            favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
+            // currently just being almost random based on movieId being odd/even number
+            if (movieId % 2 == 1) {
+                favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
+            } else {
+                favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));;
+                favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorFavoriteIcon));
+                favoriteLabel.setTextColor(getResources().getColor(R.color.colorFavoriteLabel));
+            }
 
             setClickHandlers();
         }
@@ -178,6 +187,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.favorite_text_icon:
             case R.id.favorite_text_value:
                 toggleFavorite();
+                Toast.makeText(this, "Favorite!!!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

@@ -6,4 +6,6 @@
     <color name="colorBackgroundLight">#ffffff</color>
     <color name="colorBackgroundDark">#8c8c8c</color>
     <color name="colorAlert">#800000</color>
+    <color name="colorFavoriteIcon">#0099cc</color>
+    <color name="colorFavoriteLabel">#0082ae</color>
 </resources>
