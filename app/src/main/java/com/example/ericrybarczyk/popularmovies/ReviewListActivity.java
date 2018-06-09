@@ -67,6 +67,7 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
         return new MovieReviewListAsyncTaskLoader(this, this.movieId); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
     }
 
+    // CREDIT for how to use the TabLayout as a paging indicator: https://stackoverflow.com/a/38459310/798642
     @Override
     public void onLoadFinished(@NonNull Loader<List<MovieReview>> loader, List<MovieReview> data) {
         ReviewAdapter reviewAdapter = new ReviewAdapter(this, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
