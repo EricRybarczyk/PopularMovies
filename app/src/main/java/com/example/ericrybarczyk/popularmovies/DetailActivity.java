@@ -1,6 +1,9 @@
 package com.example.ericrybarczyk.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -14,6 +17,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ericrybarczyk.popularmovies.data.DateConverter;
+import com.example.ericrybarczyk.popularmovies.data.FavoriteMoviesContract;
+import com.example.ericrybarczyk.popularmovies.data.FavoriteMoviesDbHelper;
 import com.example.ericrybarczyk.popularmovies.model.Movie;
 import com.example.ericrybarczyk.popularmovies.utils.FontManager;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
@@ -32,6 +38,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private static final int MOVIE_LOADER = 5291;
     private static final String TAG = MovieService.class.getName();
+    private FavoriteMoviesDbHelper dbHelper;
     private Movie loadedMovie;
     private boolean isFavorite;
 
@@ -55,7 +62,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+        dbHelper = new FavoriteMoviesDbHelper(this);
 
+
+        // TODO - if viewing a movie from favorites database, no need for network check
+        // need to adjust logic flow so this is only called when NOT displaying a favorite from db
         if (!NetworkChecker.isNetworkConnected(this)) {
             Log.e(TAG, "No network available");
             NetworkChecker.getNoNetworkToastMessage(this).show();
@@ -72,24 +83,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 movieId = -1;
             }
 
+            this.isFavorite = movieIsFavorite(movieId);
+
             loadMovieDetail(movieId, false);
 
             // trailers and reviews widget setup
             trailersTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
             reviewsTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
-            // TODO: adjust font face if current movie is marked as user favorite
-            // currently just being almost random based on movieId being odd/even number
-            if (movieId % 2 == 1) {
-                favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
-            } else {
-                favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));;
-                favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorFavoriteIcon));
-                favoriteLabel.setTextColor(getResources().getColor(R.color.colorFavoriteLabel));
-            }
+
+            // adjust appearance if current movie is marked as user favorite
+            setFavoriteViewAppearance();
 
             setClickHandlers();
         }
     }
+
 
     private void setClickHandlers() {
         trailersTextIcon.setOnClickListener(this);
@@ -187,13 +195,76 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.favorite_text_icon:
             case R.id.favorite_text_value:
                 toggleFavorite();
-                Toast.makeText(this, "Favorite!!!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Favorite!!!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
 
-    private void toggleFavorite() {
-        // TODO - implement toggleFavorite()
+    private void setFavoriteViewAppearance() {
+        if (this.isFavorite) {
+            favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
+            favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorFavoriteIcon));
+            favoriteLabel.setTextColor(getResources().getColor(R.color.colorFavoriteLabel));
+        } else {
+            favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
+            favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorPrimary));
+            favoriteLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+    }
+
+    private boolean movieIsFavorite(int movieId) {
+        SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
+        boolean isFavorite = false;
+        int evalId = -1;
+
+        try {
+            Cursor cursor = favoritesDb.query(
+                    FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
+                    new String[] {FavoriteMoviesContract.FavoriteMoviesEntry._ID},
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            while (cursor.moveToNext()) {
+                evalId = cursor.getInt(0);
+                if (evalId == movieId) {
+                    isFavorite = true;
+                    break;
+                }
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return isFavorite;
+    }
+
+    private void toggleFavorite() {    // TODO - implement toggleFavorite()
+        SQLiteDatabase favoritesDb = dbHelper.getWritableDatabase();
+        if (this.isFavorite) {
+            String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=" + String.valueOf(this.loadedMovie.getId());
+            favoritesDb.delete(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, where, null);
+            // TODO - delete local file of poster image
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry._ID, this.loadedMovie.getId());
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE, this.loadedMovie.getTitle());
+            // TODO - save the REAL local file path info
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_LOCAL, this.loadedMovie.getImagePath());
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE, this.loadedMovie.getImagePath());
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW, this.loadedMovie.getOverview());
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING, this.loadedMovie.getUserRating());
+            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE, DateConverter.toTimestamp(this.loadedMovie.getReleaseDate()));
+            favoritesDb.insert(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, null, values);
+        }
+        // state is saved, so flip the local indicator and update the display
+        this.isFavorite = (!this.isFavorite);
+        setFavoriteViewAppearance();
     }
 
 }
