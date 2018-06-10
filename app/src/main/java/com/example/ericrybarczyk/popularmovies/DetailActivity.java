@@ -83,6 +83,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             this.isFavorite = movieIsFavorite(movieId);
 
+            // TODO - refactor the similar code in onLoadFinished() and loadFavoriteMovie() - including display of error movie data
+
             if (this.isFavorite) {
                 loadFavoriteMovie(movieId);
             } else {
@@ -145,13 +147,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         // see if we got the error movie object back
         if (data.getId() == -1) {
-            movieTitle.setText(R.string.error_movie_title);
-            movieOverview.setText(R.string.error_movie_description);
-            moviePosterImage.setVisibility(View.GONE);
-            ratingLabel.setVisibility(View.GONE);
-            ratingBar.setVisibility(View.GONE);
-            releaseDateLabel.setVisibility(View.GONE);
-            releaseDate.setVisibility(View.GONE);
+            setErrorMovieDisplay();
             return;
         }
 
@@ -175,19 +171,95 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 .into(moviePosterImage);
     }
 
+    private void setErrorMovieDisplay() {
+        movieTitle.setText(R.string.error_movie_title);
+        movieOverview.setText(R.string.error_movie_description);
+        moviePosterImage.setVisibility(View.GONE);
+        ratingLabel.setVisibility(View.GONE);
+        ratingBar.setVisibility(View.GONE);
+        releaseDateLabel.setVisibility(View.GONE);
+        releaseDate.setVisibility(View.GONE);
+    }
+
     @Override
     public void onLoaderReset(@NonNull Loader<Movie> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
     }
 
     private void loadFavoriteMovie(int movieId) {
-        //Movie resultMovie;
+        SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
+        Movie data = null;
+        String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=" + String.valueOf(movieId);
+        Cursor cursor = null;
+        try {
 
-        Toast.makeText(this, "Favorite Movie!!!", Toast.LENGTH_LONG).show();
-        this.loadMovieDetail(movieId, false); // TODO: remove this temporary hack
+            cursor = favoritesDb.query(
+                    FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
+                    new String[] {
+                            FavoriteMoviesContract.FavoriteMoviesEntry._ID,
+                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE,
+                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE,
+                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW,
+                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING,
+                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE
+                    },
+                    where,
+                    null,
+                    null,
+                    null,
+                    null
+            );
 
+            if (cursor.moveToFirst()) {
+                // create the movie from the database
+                data = new Movie(
+                       cursor.getInt(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry._ID)),
+                        cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE)),
+                        cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW)),
+                        DateConverter.toDate((long)cursor.getInt(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE))),
+                        cursor.getDouble(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING))
+                );
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            setErrorMovieDisplay();
+            Toast.makeText(this, R.string.error_favorite_movie_fail, Toast.LENGTH_LONG).show();
+            return;
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
 
-        //this.loadedMovie = resultMovie;
+        if (data != null) {
+            this.loadedMovie = data;
+            ratingBar.setRating((float)(data.getUserRating() / 2));
+            releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
+            movieTitle.setText(data.getTitle());
+            movieOverview.setText(data.getOverview());
+            String ratingString = (new DecimalFormat("0.##")).format( (data.getUserRating() / 2) );
+            String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
+            ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int maxImageWidth = (displayMetrics.widthPixels / 2);
+            moviePosterImage.setMaxWidth(maxImageWidth);
+
+            // GET IMAGE FILE FROM FILE SYSTEM
+            String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
+            File imageFile = new File(getFilesDir(), filename);
+
+            Picasso.with(this)
+                    .load(imageFile)
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.placeholder_movie_black_18dp)
+                    .into(moviePosterImage);
+
+            // TODO - remove this debug toast
+            Toast.makeText(this, "Favorite loaded with " + filename, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -232,9 +304,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
         boolean isFavorite = false;
         int evalId;
+        Cursor cursor = null;
 
         try {
-            Cursor cursor = favoritesDb.query(
+            cursor = favoritesDb.query(
                     FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
                     new String[] {FavoriteMoviesContract.FavoriteMoviesEntry._ID},
                     null,
@@ -255,6 +328,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             cursor.close();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
 
         return isFavorite;

@@ -27,6 +27,7 @@
     <string name="error_movie_no_trailers_message">This movie has no trailers available.</string>
     <string name="error_movie_no_reviews_message">This movie has no reviews available.</string>
     <string name="error_no_video_player">Your system is unable to play this video.</string>
+    <string name="error_favorite_movie_fail">Failed to load movie from saved favorites.</string>
 
     <string name="aria_divider_line">divider line</string>
 
