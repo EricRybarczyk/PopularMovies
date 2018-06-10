@@ -21,7 +21,6 @@ public class FavoriteMoviesDbHelper extends SQLiteOpenHelper {
                 FavoriteMoviesEntry.TABLE_NAME + " (" +
                 FavoriteMoviesEntry._ID + " INTEGER PRIMARY KEY, " +
                 FavoriteMoviesEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
-                FavoriteMoviesEntry.COLUMN_IMAGE_PATH_LOCAL + " TEXT NOT NULL, " +
                 FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE + " TEXT NOT NULL, " +
                 FavoriteMoviesEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 FavoriteMoviesEntry.COLUMN_USER_RATING + " REAL NOT NULL, " +

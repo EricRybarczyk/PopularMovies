@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -25,7 +27,12 @@ import com.example.ericrybarczyk.popularmovies.utils.FontManager;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -42,7 +49,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Movie loadedMovie;
     private boolean isFavorite;
 
-    @BindView(R.id.movie_image) protected ImageView imageView;
+    @BindView(R.id.movie_image) protected ImageView moviePosterImage;
     @BindView(R.id.rating_stars) protected RatingBar ratingBar;
     @BindView(R.id.release_date_value) protected TextView releaseDate;
     @BindView(R.id.movie_title_value) protected TextView movieTitle;
@@ -64,15 +71,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         ButterKnife.bind(this);
         dbHelper = new FavoriteMoviesDbHelper(this);
 
-
-        // TODO - if viewing a movie from favorites database, no need for network check
-        // need to adjust logic flow so this is only called when NOT displaying a favorite from db
-        if (!NetworkChecker.isNetworkConnected(this)) {
-            Log.e(TAG, "No network available");
-            NetworkChecker.getNoNetworkToastMessage(this).show();
-            return;
-        }
-
         Intent starter = getIntent();
         if (starter != null) {
             int movieId;
@@ -85,7 +83,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             this.isFavorite = movieIsFavorite(movieId);
 
-            loadMovieDetail(movieId, false);
+            if (this.isFavorite) {
+                loadFavoriteMovie(movieId);
+            } else {
+                if (!NetworkChecker.isNetworkConnected(this)) {
+                    Log.e(TAG, "No network available");
+                    NetworkChecker.getNoNetworkToastMessage(this).show();
+                    return;
+                }
+                loadMovieDetail(movieId, false);
+            }
 
             // trailers and reviews widget setup
             trailersTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
@@ -140,7 +147,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (data.getId() == -1) {
             movieTitle.setText(R.string.error_movie_title);
             movieOverview.setText(R.string.error_movie_description);
-            imageView.setVisibility(View.GONE);
+            moviePosterImage.setVisibility(View.GONE);
             ratingLabel.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             releaseDateLabel.setVisibility(View.GONE);
@@ -159,18 +166,28 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int maxImageWidth = (displayMetrics.widthPixels / 2);
-        imageView.setMaxWidth(maxImageWidth);
+        moviePosterImage.setMaxWidth(maxImageWidth);
 
         Picasso.with(this)
                 .load(data.getImagePath())
                 .placeholder(R.drawable.ic_movie_placeholder)
                 .error(R.drawable.placeholder_movie_black_18dp)
-                .into(imageView);
+                .into(moviePosterImage);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Movie> loader) {
         // not doing anything here, just required by LoaderCallback<> interface
+    }
+
+    private void loadFavoriteMovie(int movieId) {
+        //Movie resultMovie;
+
+        Toast.makeText(this, "Favorite Movie!!!", Toast.LENGTH_LONG).show();
+        this.loadMovieDetail(movieId, false); // TODO: remove this temporary hack
+
+
+        //this.loadedMovie = resultMovie;
     }
 
     @Override
@@ -195,7 +212,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.favorite_text_icon:
             case R.id.favorite_text_value:
                 toggleFavorite();
-                //Toast.makeText(this, "Favorite!!!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -215,7 +231,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private boolean movieIsFavorite(int movieId) {
         SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
         boolean isFavorite = false;
-        int evalId = -1;
+        int evalId;
 
         try {
             Cursor cursor = favoritesDb.query(
@@ -244,18 +260,22 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         return isFavorite;
     }
 
-    private void toggleFavorite() {    // TODO - implement toggleFavorite()
+    private void toggleFavorite() {
         SQLiteDatabase favoritesDb = dbHelper.getWritableDatabase();
+        String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
         if (this.isFavorite) {
             String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=" + String.valueOf(this.loadedMovie.getId());
             favoritesDb.delete(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, where, null);
-            // TODO - delete local file of poster image
+            File imageFile = new File(getFilesDir(), filename);
+            imageFile.delete();
         } else {
+            Picasso.with(this)
+                    .load(this.loadedMovie.getImagePath())
+                    .into(getLocalImageTarget(filename));
+
             ContentValues values = new ContentValues();
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry._ID, this.loadedMovie.getId());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE, this.loadedMovie.getTitle());
-            // TODO - save the REAL local file path info
-            values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_LOCAL, this.loadedMovie.getImagePath());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE, this.loadedMovie.getImagePath());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW, this.loadedMovie.getOverview());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING, this.loadedMovie.getUserRating());
@@ -265,6 +285,37 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         // state is saved, so flip the local indicator and update the display
         this.isFavorite = (!this.isFavorite);
         setFavoriteViewAppearance();
+    }
+
+    private Target getLocalImageTarget(final String filename) {
+        return new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                new Thread(() -> {
+                    try {
+                        File imageFile = new File(getFilesDir(), filename);
+                        if (imageFile.exists()) {
+                            imageFile.createNewFile();
+                        }
+                        FileOutputStream outputStream = new FileOutputStream(imageFile);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG,90, outputStream);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception saving image: " + e.getMessage());
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                Log.e(TAG, "Failed to save local movie poster image");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                // don't need to do anything here, just required by Picasso's Target interface
+            }
+        };
     }
 
 }

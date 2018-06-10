@@ -8,7 +8,6 @@ public class FavoriteMoviesContract {
 
         public static final String TABLE_NAME = "favorite_movies";
         public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_IMAGE_PATH_LOCAL = "image_path_local";
         public static final String COLUMN_IMAGE_PATH_REMOTE = "image_path_remote";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_RELEASE_DATE = "release_date";
