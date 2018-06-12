@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -341,8 +343,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         SQLiteDatabase favoritesDb = dbHelper.getWritableDatabase();
         String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
         if (this.isFavorite) {
-            String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=" + String.valueOf(this.loadedMovie.getId());
-            favoritesDb.delete(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, where, null);
+            Uri uri = (FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI)
+                    .buildUpon().appendPath(String.valueOf(this.loadedMovie.getId())).build();
+            this.getContentResolver().delete(uri, null, null);
             File imageFile = new File(getFilesDir(), filename);
             imageFile.delete();
         } else {
@@ -357,7 +360,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW, this.loadedMovie.getOverview());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING, this.loadedMovie.getUserRating());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE, DateConverter.toTimestamp(this.loadedMovie.getReleaseDate()));
-            favoritesDb.insert(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, null, values);
+            Uri uri = this.getContentResolver().insert(FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI, values);
         }
         // state is saved, so flip the local indicator and update the display
         this.isFavorite = (!this.isFavorite);
