@@ -8,7 +8,6 @@ public class FavoriteMoviesContract {
     public static final String AUTHORITY = "com.example.ericrybarczyk.popularmovies";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String PATH_FAVORITE_MOVIES = "favorite_movies";
-    public static final String PATH_FAVORITE_MOVIE_IDS = "favorite_movie_ids";
 
     public static final class FavoriteMoviesEntry implements BaseColumns {
 

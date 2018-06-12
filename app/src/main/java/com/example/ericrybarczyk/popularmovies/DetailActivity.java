@@ -3,7 +3,6 @@ package com.example.ericrybarczyk.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -31,10 +30,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -47,7 +44,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private static final int MOVIE_LOADER = 5291;
     private static final String TAG = MovieService.class.getName();
-    private FavoriteMoviesDbHelper dbHelper;
     private Movie loadedMovie;
     private boolean isFavorite;
 
@@ -71,7 +67,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-        dbHelper = new FavoriteMoviesDbHelper(this);
 
         Intent starter = getIntent();
         if (starter != null) {
@@ -189,29 +184,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void loadFavoriteMovie(int movieId) {
-        SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
-        Movie data = null;
-        String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=" + String.valueOf(movieId);
         Cursor cursor = null;
+        Movie data = null;
+        Uri uri = (FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI)
+                .buildUpon().appendPath(String.valueOf(movieId)).build();
         try {
-
-            cursor = favoritesDb.query(
-                    FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
-                    new String[] {
-                            FavoriteMoviesContract.FavoriteMoviesEntry._ID,
-                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE,
-                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE,
-                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW,
-                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING,
-                            FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE
-                    },
-                    where,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-
+            cursor = this.getContentResolver().query(uri, null, null, null, null);
+            assert cursor != null;
             if (cursor.moveToFirst()) {
                 // create the movie from the database
                 data = new Movie(
@@ -237,10 +216,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (data != null) {
             this.loadedMovie = data;
             ratingBar.setRating((float)(data.getUserRating() / 2));
-            releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
+            releaseDate.setText(new SimpleDateFormat(getString(R.string.format_date), Locale.getDefault()).format(data.getReleaseDate()));
             movieTitle.setText(data.getTitle());
             movieOverview.setText(data.getOverview());
-            String ratingString = (new DecimalFormat("0.##")).format( (data.getUserRating() / 2) );
+            String ratingString = (new DecimalFormat(getString(R.string.format_rating_decimal))).format( (data.getUserRating() / 2) );
             String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
             ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
 
@@ -260,7 +239,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     .into(moviePosterImage);
 
             // TODO - remove this debug toast
-            Toast.makeText(this, "Favorite loaded with " + filename, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Favorite loaded with " + filename, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -303,31 +282,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private boolean movieIsFavorite(int movieId) {
-        SQLiteDatabase favoritesDb = dbHelper.getReadableDatabase();
         boolean isFavorite = false;
         int evalId;
         Cursor cursor = null;
+        Uri uri = (FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI)
+                .buildUpon()
+                .appendPath(String.valueOf(movieId)).build();
 
         try {
-            cursor = favoritesDb.query(
-                    FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
-                    new String[] {FavoriteMoviesContract.FavoriteMoviesEntry._ID},
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-
+            cursor = this.getContentResolver().query(uri, null, null, null, null);
+            assert cursor != null;
             while (cursor.moveToNext()) {
-                evalId = cursor.getInt(0);
+                evalId = cursor.getInt(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry._ID));
                 if (evalId == movieId) {
                     isFavorite = true;
                     break;
                 }
             }
-
-            cursor.close();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         } finally {
@@ -340,7 +311,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void toggleFavorite() {
-        SQLiteDatabase favoritesDb = dbHelper.getWritableDatabase();
         String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
         if (this.isFavorite) {
             Uri uri = (FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI)
@@ -350,9 +320,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             imageFile.delete();
         } else {
             Picasso.with(this)
-                    .load(this.loadedMovie.getImagePath())
+                    .load(this.loadedMovie.getImagePath()) // expect image is cached
                     .into(getLocalImageTarget(filename));
-
             ContentValues values = new ContentValues();
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry._ID, this.loadedMovie.getId());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE, this.loadedMovie.getTitle());
@@ -360,7 +329,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW, this.loadedMovie.getOverview());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING, this.loadedMovie.getUserRating());
             values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE, DateConverter.toTimestamp(this.loadedMovie.getReleaseDate()));
-            Uri uri = this.getContentResolver().insert(FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI, values);
+            this.getContentResolver().insert(FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI, values);
         }
         // state is saved, so flip the local indicator and update the display
         this.isFavorite = (!this.isFavorite);

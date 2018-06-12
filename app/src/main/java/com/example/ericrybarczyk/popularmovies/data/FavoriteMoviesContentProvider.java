@@ -13,8 +13,7 @@ import android.support.annotation.Nullable;
 public class FavoriteMoviesContentProvider extends ContentProvider {
 
     public static final int FAVORITE_MOVIES = 100;
-    public static final int FAVORITE_MOVIE_IDS = 101;
-    public static final int FAVORITE_MOVIE_FOR_ID = 102;
+    public static final int FAVORITE_MOVIE_FOR_ID = 101;
 
     public static final UriMatcher URI_MATCHER = buildUriMatcher();
 
@@ -31,13 +30,21 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final String[] movieDataFields = new String[] {
+                FavoriteMoviesContract.FavoriteMoviesEntry._ID,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_USER_RATING,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE
+        };
         int match = URI_MATCHER.match(uri);
         Cursor result;
 
         switch (match) {
             case FAVORITE_MOVIES:
                 result = db.query(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
-                        projection,
+                        movieDataFields,
                         selection,
                         selectionArgs,
                         null,
@@ -45,18 +52,21 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
-            case FAVORITE_MOVIE_IDS:
+            case FAVORITE_MOVIE_FOR_ID:
+                // URI: content://<authority>/FAVORITE_MOVIES/#
+                String id = uri.getPathSegments().get(1);
+                String where = FavoriteMoviesContract.FavoriteMoviesEntry._ID + "=?";
+                String[] args = new String[]{id};
                 result = db.query(
                         FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME,
-                        new String[] {FavoriteMoviesContract.FavoriteMoviesEntry._ID},
+                        movieDataFields,
+                        where,
+                        args,
                         null,
                         null,
-                        null,
-                        null,
-                        null
-                );
+                        null);
                 break;
-            default:
+                default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
@@ -122,7 +132,6 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher() {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(FavoriteMoviesContract.AUTHORITY, FavoriteMoviesContract.PATH_FAVORITE_MOVIES, FAVORITE_MOVIES);
-        matcher.addURI(FavoriteMoviesContract.AUTHORITY, FavoriteMoviesContract.PATH_FAVORITE_MOVIE_IDS, FAVORITE_MOVIE_IDS);
         matcher.addURI(FavoriteMoviesContract.AUTHORITY, FavoriteMoviesContract.PATH_FAVORITE_MOVIES + "/#", FAVORITE_MOVIE_FOR_ID);
         return matcher;
     }
