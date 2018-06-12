@@ -31,7 +31,7 @@
         <provider
             android:authorities="com.example.ericrybarczyk.popularmovies"
             android:name="com.example.ericrybarczyk.popularmovies.data.FavoriteMoviesContentProvider"
-            android:exported="true" />
+            android:exported="true" /> <!-- TODO - see if this EXPORTED setting is correct to make the CP available to other apps -->
     </application>
 
 </manifest>
