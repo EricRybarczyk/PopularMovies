@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ericrybarczyk.popularmovies.model.Movie;
+import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,14 +24,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     private List<Movie> movieList;
     private final Context parentContext;
     private final MovieAdapterOnClickHandler movieItemClickHandler;
+    private final String sortPreference;
 
     public interface MovieAdapterOnClickHandler {
         void onClick(int movieId);
     }
 
-    public MovieAdapter(Context context, MovieAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(Context context, MovieAdapterOnClickHandler clickHandler, String sortPreference) {
         parentContext = context;
         movieItemClickHandler = clickHandler;
+        this.sortPreference = sortPreference;
     }
 
 
@@ -50,11 +54,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = movieList.get(position);
 
-        Picasso.with(parentContext)
-                .load(movie.getImagePath())
-                .placeholder(R.drawable.ic_movie_placeholder)
-                .error(R.drawable.placeholder_movie_black_18dp)
-                .into(holder.movieImageView);
+        if (this.sortPreference == parentContext.getResources().getString(R.string.pref_sort_favorite_value)) {
+            // GET IMAGE FILE FROM FILE SYSTEM
+            String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(movie.getId());
+            File imageFile = new File(parentContext.getFilesDir(), filename);
+            Picasso.with(parentContext)
+                    .load(imageFile)
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.placeholder_movie_black_18dp)
+                    .into(holder.movieImageView);
+        } else {
+            Picasso.with(parentContext)
+                    .load(movie.getImagePath())
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.placeholder_movie_black_18dp)
+                    .into(holder.movieImageView);
+        }
     }
 
     @Override

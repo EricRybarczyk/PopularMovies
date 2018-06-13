@@ -9,9 +9,11 @@
 
     <string name="pref_sort_popular_label">Popular</string>
     <string name="pref_sort_rating_label">Rating</string>
+    <string name="pref_sort_favorite_label">Favorites</string>
 
     <string name="pref_sort_popular_value">popular</string>
     <string name="pref_sort_rating_value">top_rated</string>
+    <string name="pref_sort_favorite_value">favorites</string>
 
     <!-- DetailActivity items -->
     <string name="label_rating">RATING</string>

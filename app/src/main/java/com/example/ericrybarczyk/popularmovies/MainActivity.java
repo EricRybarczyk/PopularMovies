@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        movieAdapter = new MovieAdapter(this, this);
+        movieAdapter = new MovieAdapter(this, this, sortPreference);
         recyclerView.setAdapter(movieAdapter);
 
         loadMovieData(false);
