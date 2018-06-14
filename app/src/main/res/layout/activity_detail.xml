@@ -28,7 +28,6 @@
             tools:layout_height="300dp"/>
         <!-- placeholder image licensed free for personal use: https://www.kisspng.com/png-photographic-film-reel-clip-art-movie-film-173787/ -->
 
-        <!-- TODO: figure out if this LinearLayout is really necessary around the RatingBar -->
         <LinearLayout
             android:id="@+id/rating_container"
             android:layout_width="wrap_content"

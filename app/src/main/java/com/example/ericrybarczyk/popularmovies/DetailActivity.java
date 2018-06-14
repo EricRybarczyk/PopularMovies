@@ -80,8 +80,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             this.isFavorite = movieIsFavorite(movieId);
 
-            // TODO - refactor the similar code in onLoadFinished() and loadFavoriteMovie() - including display of error movie data
-
             if (this.isFavorite) {
                 loadFavoriteMovie(movieId);
             } else {
@@ -148,11 +146,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
-        ratingBar.setRating((float)(data.getUserRating() / 2));
-        releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(data.getReleaseDate()));
-        movieTitle.setText(data.getTitle());
-        movieOverview.setText(data.getOverview());
-        String ratingString = (new DecimalFormat("0.##")).format( (data.getUserRating() / 2) );
+        displayMovieData(data);
+    }
+
+    private void displayMovieData(Movie movie) {
+
+        ratingBar.setRating((float)(movie.getUserRating() / 2));
+        releaseDate.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(movie.getReleaseDate()));
+        movieTitle.setText(movie.getTitle());
+        movieOverview.setText(movie.getOverview());
+        String ratingString = (new DecimalFormat("0.##")).format( (movie.getUserRating() / 2) );
         String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
         ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
 
@@ -161,11 +164,23 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         int maxImageWidth = (displayMetrics.widthPixels / 2);
         moviePosterImage.setMaxWidth(maxImageWidth);
 
-        Picasso.with(this)
-                .load(data.getImagePath())
-                .placeholder(R.drawable.ic_movie_placeholder)
-                .error(R.drawable.placeholder_movie_black_18dp)
-                .into(moviePosterImage);
+        if (this.isFavorite) {
+            // GET IMAGE FILE FROM FILE SYSTEM
+            String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
+            File imageFile = new File(getFilesDir(), filename);
+            Picasso.with(this)
+                    .load(imageFile)
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.placeholder_movie_black_18dp)
+                    .into(moviePosterImage);
+        } else {
+            Picasso.with(this)
+                    .load(movie.getImagePath())
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.placeholder_movie_black_18dp)
+                    .into(moviePosterImage);
+        }
+
     }
 
     private void setErrorMovieDisplay() {
@@ -215,31 +230,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (data != null) {
             this.loadedMovie = data;
-            ratingBar.setRating((float)(data.getUserRating() / 2));
-            releaseDate.setText(new SimpleDateFormat(getString(R.string.format_date), Locale.getDefault()).format(data.getReleaseDate()));
-            movieTitle.setText(data.getTitle());
-            movieOverview.setText(data.getOverview());
-            String ratingString = (new DecimalFormat(getString(R.string.format_rating_decimal))).format( (data.getUserRating() / 2) );
-            String ratingDescriptionText = getString(R.string.rating_description_text, ratingString);
-            ratingDescription.setText(ratingDescriptionText); // N.n out of 5 stars
-
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            int maxImageWidth = (displayMetrics.widthPixels / 2);
-            moviePosterImage.setMaxWidth(maxImageWidth);
-
-            // GET IMAGE FILE FROM FILE SYSTEM
-            String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(loadedMovie.getId());
-            File imageFile = new File(getFilesDir(), filename);
-
-            Picasso.with(this)
-                    .load(imageFile)
-                    .placeholder(R.drawable.ic_movie_placeholder)
-                    .error(R.drawable.placeholder_movie_black_18dp)
-                    .into(moviePosterImage);
-
-            // TODO - remove this debug toast
-            //Toast.makeText(this, "Favorite loaded with " + filename, Toast.LENGTH_LONG).show();
+            displayMovieData(data);
         }
     }
 
