@@ -85,6 +85,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 loadFavoriteMovie(movieId);
             } else {
                 if (!NetworkChecker.isNetworkConnected(this)) {
+                    hideMovieDetails();
                     Log.e(TAG, NetworkChecker.getNoNetworkLogMessage(this));
                     NetworkChecker.getNoNetworkToastMessage(this).show();
                     return;
@@ -186,11 +187,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private void setErrorMovieDisplay() {
         movieTitle.setText(R.string.error_movie_title);
         movieOverview.setText(R.string.error_movie_description);
+        hideMovieDetails();
+    }
+
+    private void hideMovieDetails() {
         moviePosterImage.setVisibility(View.GONE);
         ratingLabel.setVisibility(View.GONE);
         ratingBar.setVisibility(View.GONE);
         releaseDateLabel.setVisibility(View.GONE);
         releaseDate.setVisibility(View.GONE);
+        trailersTextIcon.setVisibility(View.GONE);
+        trailersLabel.setVisibility(View.GONE);
+        reviewsTextIcon.setVisibility(View.GONE);
+        reviewsLabel.setVisibility(View.GONE);
+        favoriteTextIcon.setVisibility(View.GONE);
+        favoriteLabel.setVisibility(View.GONE);
     }
 
     @Override
