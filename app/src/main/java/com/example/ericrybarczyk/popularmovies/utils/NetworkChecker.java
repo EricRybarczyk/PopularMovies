@@ -20,7 +20,11 @@ public class NetworkChecker {
     }
 
     public static Toast getNoNetworkToastMessage(Context context) {
-        return Toast.makeText(context, R.string.error_message_no_network, Toast.LENGTH_LONG);
+        return Toast.makeText(context, R.string.error_no_network, Toast.LENGTH_LONG);
+    }
+
+    public static String getNoNetworkLogMessage(Context context) {
+        return context.getString(R.string.log_message_no_network);
     }
 
 }

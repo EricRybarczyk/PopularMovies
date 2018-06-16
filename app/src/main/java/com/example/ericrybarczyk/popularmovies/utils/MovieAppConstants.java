@@ -6,5 +6,6 @@ public final class MovieAppConstants {
     public static final String NO_REVIEW_ID = "there_is_no_review";
     public static final String NO_REVIEW_AUTHOR = "there_is_no_author";
     public static final String LOCAL_POSTER_PREFIX = "poster_";
+    public static final int ERROR_MOVIE_ID = -1;
 
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.MovieTrailer;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
+import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 
 import java.util.List;
 
@@ -34,14 +35,21 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trailer_list);
         ButterKnife.bind(this);
-        movieId = -1;
+        movieId = MovieAppConstants.ERROR_MOVIE_ID;
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity.hasExtra(MovieAppConstants.KEY_MOVIE_ID)) {
-            movieId = intentThatStartedThisActivity.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, -1);
+            movieId = intentThatStartedThisActivity.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, MovieAppConstants.ERROR_MOVIE_ID);
         }
         if (intentThatStartedThisActivity.hasExtra(MovieAppConstants.KEY_MOVIE_TITLE)) {
             movieTitle.setText(intentThatStartedThisActivity.getStringExtra(MovieAppConstants.KEY_MOVIE_TITLE));
+        }
+
+        // trailers require network connection
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Log.e(TAG, NetworkChecker.getNoNetworkLogMessage(this));
+            NetworkChecker.getNoNetworkToastMessage(this).show();
+            return;
         }
 
         loadTrailers(movieId);
@@ -56,7 +64,7 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
         LoaderManager loaderManager = getSupportLoaderManager();
 
         loaderManager.initLoader(TRAILER_LOADER, null, this);
-        Log.d(TAG, "loadMovieData - initLoader");
+        Log.d(TAG, getString(R.string.log_message_init_loader));
 
         // TODO ?? make this work like MainActivity.loadMovieDetail() - do I need the refresh thing to restartLoader() vs initLoader() ??
     }

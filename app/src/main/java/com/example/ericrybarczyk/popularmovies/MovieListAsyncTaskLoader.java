@@ -42,7 +42,7 @@ public class MovieListAsyncTaskLoader extends AsyncTaskLoader<List<Movie>>{
     @Override
     public List<Movie> loadInBackground() {
         List<Movie> data;
-        if (sortPreference == getContext().getResources().getString(R.string.pref_sort_favorite_value)) {
+        if (sortPreference.equals(getContext().getResources().getString(R.string.pref_sort_favorite_value))) {
             Cursor cursor = null;
             Uri uri = (FavoriteMoviesContract.FavoriteMoviesEntry.CONTENT_URI);
             data = new ArrayList<>();

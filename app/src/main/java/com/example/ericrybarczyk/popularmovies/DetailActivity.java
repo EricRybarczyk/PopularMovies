@@ -72,10 +72,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if (starter != null) {
             int movieId;
             if (starter.hasExtra(MovieAppConstants.KEY_MOVIE_ID)) {
-                movieId = starter.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, 0);
+                movieId = starter.getIntExtra(MovieAppConstants.KEY_MOVIE_ID, MovieAppConstants.ERROR_MOVIE_ID);
             } else {
-                Log.e(TAG, "Missing expected data: " + MovieAppConstants.KEY_MOVIE_ID);
-                movieId = -1;
+                Log.e(TAG, getString(R.string.log_missing_expected_data) + MovieAppConstants.KEY_MOVIE_ID);
+                movieId = MovieAppConstants.ERROR_MOVIE_ID;
             }
 
             this.isFavorite = movieIsFavorite(movieId);
@@ -84,7 +84,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 loadFavoriteMovie(movieId);
             } else {
                 if (!NetworkChecker.isNetworkConnected(this)) {
-                    Log.e(TAG, "No network available");
+                    Log.e(TAG, NetworkChecker.getNoNetworkLogMessage(this));
                     NetworkChecker.getNoNetworkToastMessage(this).show();
                     return;
                 }
@@ -96,7 +96,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             reviewsTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
 
             // adjust appearance if current movie is marked as user favorite
-            setFavoriteViewAppearance();
+            setFavoriteIndicator();
 
             setClickHandlers();
         }
@@ -120,12 +120,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (refresh) {
             loaderManager.restartLoader(MOVIE_LOADER, bundle, this);
-            Log.d(TAG, "loadMovieDetail - restartLoader");
+            Log.d(TAG, getString(R.string.log_message_restart_loader));
         } else {
             loaderManager.initLoader(MOVIE_LOADER, bundle, this);
-            Log.d(TAG, "loadMovieDetail - initLoader");
+            Log.d(TAG, getString(R.string.log_message_init_loader));
         }
-
     }
 
     @NonNull
@@ -141,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         loadedMovie = data; // set a reference for the click event handlers
 
         // see if we got the error movie object back
-        if (data.getId() == -1) {
+        if (data.getId() == MovieAppConstants.ERROR_MOVIE_ID) {
             setErrorMovieDisplay();
             return;
         }
@@ -209,7 +208,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             if (cursor.moveToFirst()) {
                 // create the movie from the database
                 data = new Movie(
-                       cursor.getInt(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry._ID)),
+                        cursor.getInt(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry._ID)),
                         cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE)),
                         cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_IMAGE_PATH_REMOTE)),
                         cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW)),
@@ -260,7 +259,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    private void setFavoriteViewAppearance() {
+    private void setFavoriteIndicator() {
         if (this.isFavorite) {
             favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
             favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorFavoriteIcon));
@@ -308,7 +307,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     .buildUpon().appendPath(String.valueOf(this.loadedMovie.getId())).build();
             this.getContentResolver().delete(uri, null, null);
             File imageFile = new File(getFilesDir(), filename);
-            imageFile.delete();
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                Log.e(TAG, getString(R.string.error_image_delete) + filename);
+            }
         } else {
             Picasso.with(this)
                     .load(this.loadedMovie.getImagePath()) // expect image is cached
@@ -324,7 +326,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
         // state is saved, so flip the local indicator and update the display
         this.isFavorite = (!this.isFavorite);
-        setFavoriteViewAppearance();
+        setFavoriteIndicator();
     }
 
     private Target getLocalImageTarget(final String filename) {
@@ -335,20 +337,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     try {
                         File imageFile = new File(getFilesDir(), filename);
                         if (imageFile.exists()) {
-                            imageFile.createNewFile();
+                            imageFile.createNewFile(); // TODO - check bool result and log if error
                         }
                         FileOutputStream outputStream = new FileOutputStream(imageFile);
                         bitmap.compress(Bitmap.CompressFormat.JPEG,90, outputStream);
                         outputStream.close();
                     } catch (IOException e) {
-                        Log.e(TAG, "Exception saving image: " + e.getMessage());
+                        Log.e(TAG, getString(R.string.error_image_save) + " - " +  filename + " - " + e.getMessage());
                     }
                 }).start();
             }
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
-                Log.e(TAG, "Failed to save local movie poster image");
+                Log.e(TAG, getString(R.string.error_image_save));
             }
 
             @Override

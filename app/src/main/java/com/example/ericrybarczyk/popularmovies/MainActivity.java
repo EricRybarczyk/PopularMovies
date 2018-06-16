@@ -48,13 +48,15 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if (!NetworkChecker.isNetworkConnected(this)) {
-            Log.e(TAG, "No network available");
-            NetworkChecker.getNoNetworkToastMessage(this).show();
-            return;
-        }
+        getPreferences();
 
-        setPreferences();
+        if (!sortPreference.equals(getString(R.string.pref_sort_favorite_value))){
+            if (!NetworkChecker.isNetworkConnected(this)) {
+                Log.e(TAG, NetworkChecker.getNoNetworkLogMessage(this));
+                NetworkChecker.getNoNetworkToastMessage(this).show();
+                return;
+            }
+        }
 
         // set up the RecyclerView and layout
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements
         loadMovieData(false);
     }
 
-    private void setPreferences() {
+    private void getPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sortPreference = sharedPreferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popular_value));
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -90,10 +92,10 @@ public class MainActivity extends AppCompatActivity implements
 
         if (refresh) {
             loaderManager.restartLoader(MOVIE_LOADER, listTypeBundle, this);
-            Log.d(TAG, "loadMovieData - restartLoader");
+            Log.d(TAG, getString(R.string.log_message_restart_loader));
         } else {
             loaderManager.initLoader(MOVIE_LOADER, listTypeBundle, this);
-            Log.d(TAG, "loadMovieData - initLoader");
+            Log.d(TAG, getString(R.string.log_message_init_loader));
         }
 
     }

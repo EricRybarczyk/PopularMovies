@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.ericrybarczyk.popularmovies.model.MovieReview;
 import com.example.ericrybarczyk.popularmovies.utils.MovieAppConstants;
+import com.example.ericrybarczyk.popularmovies.utils.NetworkChecker;
 
 import java.util.List;
 
@@ -47,6 +48,13 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
             movieTitle.setText(intentThatStartedThisActivity.getStringExtra(MovieAppConstants.KEY_MOVIE_TITLE));
         }
 
+        // trailers require network connection
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Log.e(TAG, NetworkChecker.getNoNetworkLogMessage(this));
+            NetworkChecker.getNoNetworkToastMessage(this).show();
+            return;
+        }
+
         loadReviews(movieId);
     }
 
@@ -58,7 +66,7 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
         LoaderManager loaderManager = getSupportLoaderManager();
 
         loaderManager.initLoader(REVIEWS_LOADER, null, this);
-        Log.d(TAG, "loadMovieData - initLoader");
+        Log.d(TAG, getString(R.string.log_message_init_loader));
 
         // TODO ?? make this work like MainActivity.loadMovieDetail() - do I need the refresh thing to restartLoader() vs initLoader() ??
     }

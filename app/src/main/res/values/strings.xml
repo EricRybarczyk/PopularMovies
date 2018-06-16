@@ -22,7 +22,7 @@
     <string name="favorite_toggle_value">Favorite</string>
 
     <!-- Error message strings -->
-    <string name="error_message_no_network">No Network Available. Please check your settings and try again.</string>
+    <string name="error_no_network">No Network Available. Please check your settings and try again. You may also display any saved Favorites by changing your Preferences.</string>
     <string name="error_movie_title">Movie Not Found</string>
     <string name="error_movie_description">The movie you requested was not found. You will not enjoy watching a movie that does not exist. Maybe you should pick a different movie. Star Wars is always good.</string>
     <string name="error_movie_poster">missing.jpg</string>
@@ -30,6 +30,14 @@
     <string name="error_movie_no_reviews_message">This movie has no reviews available.</string>
     <string name="error_no_video_player">Your system is unable to play this video.</string>
     <string name="error_favorite_movie_fail">Failed to load movie from saved favorites.</string>
+    <string name="error_image_delete">Failed to delete local image filename: </string>
+    <string name="error_image_save">Error saving local image:</string>
+
+    <!--log messages-->
+    <string name="log_message_no_network">No network available</string>
+    <string name="log_missing_expected_data">Missing expected data:</string>
+    <string name="log_message_restart_loader">loadMovieDetail - restartLoader</string>
+    <string name="log_message_init_loader">loadMovieDetail - initLoader</string>
 
     <string name="aria_divider_line">divider line</string>
 
