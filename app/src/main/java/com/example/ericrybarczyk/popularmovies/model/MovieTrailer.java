@@ -1,11 +1,11 @@
 package com.example.ericrybarczyk.popularmovies.model;
 
 public class MovieTrailer {
-    private String id;
-    private String key;
-    private String name;
-    private String site;
-    private String type;
+    private final String id;
+    private final String key;
+    private final String name;
+    private final String site;
+    private final String type;
 
     public MovieTrailer(String id, String key, String name, String site, String type) {
         this.id = id;

@@ -28,11 +28,9 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
     @BindView(R.id.trailer_name_value) protected TextView trailerName;
     @BindView(R.id.trailer_site_value) protected TextView trailerSite;
     private static final String TAG = TrailerAdapter.class.getSimpleName();
-    private Context context;
 
-    public TrailerAdapter(@NonNull Context context, int resource, List<MovieTrailer> trailers) {
+    TrailerAdapter(@NonNull Context context, int resource, List<MovieTrailer> trailers) {
         super(context, resource, trailers);
-        this.context = context;
     }
 
     @NonNull
@@ -43,7 +41,7 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
         Context context = getContext();
 
         if (trailer == null) {
-            Log.e(TAG, "Null result for MovieTrailer in data position " + position);
+            Log.e(TAG, context.getString(R.string.error_adapter_data_position) + position);
         }
 
         if (convertView == null) {
@@ -55,12 +53,12 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
 
         convertView.setOnClickListener(v -> {
             String trailerKey = v.getTag().toString();
-            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(this.context.getString(R.string.intent_youtube_app_base_uri) + trailerKey));
+            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.intent_youtube_app_base_uri) + trailerKey));
 
             if (appIntent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(appIntent);
             } else {
-                Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(this.context.getString(R.string.intent_youtube_web_base_uri) + trailerKey));
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.intent_youtube_web_base_uri) + trailerKey));
                 if (webIntent.resolveActivity(context.getPackageManager()) != null) {
                     context.startActivity(webIntent);
                 } else {
@@ -74,11 +72,11 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
         assert trailer != null;
         trailerName.setText(trailer.getName());
         trailerSite.setText(trailer.getSite());
-        String thumbnailImagePath = buildThumbnailImagePath(trailer);
+        String thumbnailImagePath = buildThumbnailImagePath(context, trailer);
         Picasso.with(context)
                 .load(thumbnailImagePath)
-                .placeholder(R.drawable.ic_movie_placeholder) // TODO - better placeholder for this image
-                .error(R.drawable.placeholder_movie_black_18dp) // TODO - better placeholder for this image
+                .placeholder(R.drawable.ic_ondemand_video)
+                .error(R.drawable.ic_error_outline)
                 .into(trailerThumbnail);
 
         return convertView;
@@ -86,14 +84,14 @@ public class TrailerAdapter extends ArrayAdapter<MovieTrailer> {
     }
 
     @NonNull
-    private String buildThumbnailImagePath(MovieTrailer trailer) {
+    private String buildThumbnailImagePath(Context context, MovieTrailer trailer) {
         String result = null;
         try {
             String baseUrl = context.getString(R.string.youtube_trailer_thumbnail_base_url);
             String filename = context.getString(R.string.youtube_trailer_thumbnail_filename);
             result = baseUrl + trailer.getKey() + "/" + filename;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
         return result;

@@ -1,7 +1,6 @@
 package com.example.ericrybarczyk.popularmovies.model;
 
 import java.util.Date;
-import java.util.List;
 
 public class Movie {
 

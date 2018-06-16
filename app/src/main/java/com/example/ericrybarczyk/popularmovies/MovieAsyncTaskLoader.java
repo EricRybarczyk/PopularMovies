@@ -11,10 +11,10 @@ import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 public class MovieAsyncTaskLoader extends AsyncTaskLoader<Movie> {
 
     private Movie cachedMovie;
-    private String apiKey;
-    private int movieId;
+    private final String apiKey;
+    private final int movieId;
 
-    public MovieAsyncTaskLoader(@NonNull Context context, int movieId) {
+    MovieAsyncTaskLoader(@NonNull Context context, int movieId) {
         super(context);
         apiKey = (new ApiKeyUtil(context.getResources())).getApiKey();
         this.movieId = movieId;

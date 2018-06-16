@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="aria_movie_poster_image">Movie Poster Image</string>
     <string name="pref_menu_title">Preferences</string>
 
     <!-- Preferences - grid sort order -->
@@ -32,6 +31,8 @@
     <string name="error_favorite_movie_fail">Failed to load movie from saved favorites.</string>
     <string name="error_image_delete">Failed to delete local image filename: </string>
     <string name="error_image_save">Error saving local image:</string>
+    <string name="error_image_overwrite">Error overwriting existing local image:</string>
+    <string name="error_adapter_data_position">Null result for MovieTrailer in data position</string>
 
     <!--log messages-->
     <string name="log_message_no_network">No network available</string>
@@ -39,7 +40,10 @@
     <string name="log_message_restart_loader">loadMovieDetail - restartLoader</string>
     <string name="log_message_init_loader">loadMovieDetail - initLoader</string>
 
+    <!--accessibility items-->
+    <string name="aria_movie_poster_image">Movie Poster Image</string>
     <string name="aria_divider_line">divider line</string>
+    <string name="aria_trailer_image">Movie Trailer Image</string>
 
     <string name="tools_movie_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
     <string name="tools_movie_title">Movie Title Goes Here</string>
@@ -47,11 +51,13 @@
     <string name="tools_rating_description">N.n out of 5 stars</string>
     <string name="tools_trailer_list_item_name">Trailer Name Here</string>
     <string name="tools_trailer_list_item_site_value">Source Site</string>
+    <string name="tools_review_author_name">Author Name Here</string>
 
     <!-- trailers and reviews section -->
     <string name="trailers_text_value">TRAILERS</string>
     <string name="reviews_text_value">REVIEWS</string>
     <string name="favorite_text_value">FAVORITE</string>
+    <string name="reviews_author_label">Reviewed By:</string>
     <string name="fa_icon_thumbs_up">&#xf164;</string>
     <string name="fa_icon_video">&#xf03d;</string>
     <string name="fa_icon_bookmark_enabled">&#xf02e;</string>

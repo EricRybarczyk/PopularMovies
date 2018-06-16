@@ -30,7 +30,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
         void onClick(int movieId);
     }
 
-    public MovieAdapter(Context context, MovieAdapterOnClickHandler clickHandler, String sortPreference) {
+    MovieAdapter(Context context, MovieAdapterOnClickHandler clickHandler, String sortPreference) {
         parentContext = context;
         movieItemClickHandler = clickHandler;
         this.sortPreference = sortPreference;
@@ -54,7 +54,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder>
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = movieList.get(position);
 
-        if (this.sortPreference == parentContext.getResources().getString(R.string.pref_sort_favorite_value)) {
+        if (this.sortPreference.equals(parentContext.getResources().getString(R.string.pref_sort_favorite_value))) {
             // GET IMAGE FILE FROM FILE SYSTEM
             String filename = MovieAppConstants.LOCAL_POSTER_PREFIX + String.valueOf(movie.getId());
             File imageFile = new File(parentContext.getFilesDir(), filename);

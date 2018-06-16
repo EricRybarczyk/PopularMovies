@@ -55,26 +55,18 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
             return;
         }
 
-        loadReviews(movieId);
+        loadReviews();
     }
 
-    private void loadReviews(int movieId) {
-        // TODO - do I need this bundle?  Do I need the same bundle thing in MainActivity equivalent to this method?
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(MovieAppConstants.KEY_MOVIE_ID, movieId);
-
-        LoaderManager loaderManager = getSupportLoaderManager();
-
-        loaderManager.initLoader(REVIEWS_LOADER, null, this);
+    private void loadReviews() {
+        getSupportLoaderManager().initLoader(REVIEWS_LOADER, null, this);
         Log.d(TAG, getString(R.string.log_message_init_loader));
-
-        // TODO ?? make this work like MainActivity.loadMovieDetail() - do I need the refresh thing to restartLoader() vs initLoader() ??
     }
 
     @NonNull
     @Override
     public Loader<List<MovieReview>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new MovieReviewListAsyncTaskLoader(this, this.movieId); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
+        return new MovieReviewListAsyncTaskLoader(this, this.movieId);
     }
 
     // CREDIT for how to use the TabLayout as a paging indicator: https://stackoverflow.com/a/38459310/798642
@@ -86,7 +78,7 @@ public class ReviewListActivity extends AppCompatActivity implements LoaderManag
                     MovieAppConstants.NO_REVIEW_AUTHOR,
                     getString(R.string.error_movie_no_reviews_message)));
         }
-        ReviewAdapter reviewAdapter = new ReviewAdapter(this, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
+        ReviewAdapter reviewAdapter = new ReviewAdapter(data);
         reviewPager.setAdapter(reviewAdapter);
         if (data.size() > 1) {
             pageIndicator.setupWithViewPager(reviewPager, true);

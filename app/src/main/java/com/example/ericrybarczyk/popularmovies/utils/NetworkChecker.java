@@ -9,7 +9,10 @@ import com.example.ericrybarczyk.popularmovies.R;
 
 public class NetworkChecker {
 
-    // directly adapted from https://stackoverflow.com/a/4009133/798642 as recommended by Udacity for this project
+    /*  This method was directly adapted from https://stackoverflow.com/a/4009133/798642
+        as recommended by Udacity for this project.
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") // I prefer the affirmative (is) method name prefix
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {

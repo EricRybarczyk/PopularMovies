@@ -12,11 +12,11 @@ import java.util.List;
 
 public class MovieTrailerListAsyncTaskLoader extends AsyncTaskLoader<List<MovieTrailer>> {
 
-    private String apiKey;
+    private final String apiKey;
     private List<MovieTrailer> cachedTrailers;
-    int movieId;
+    private final int movieId;
 
-    public MovieTrailerListAsyncTaskLoader(@NonNull Context context, int movieId) {
+    MovieTrailerListAsyncTaskLoader(@NonNull Context context, int movieId) {
         super(context);
         apiKey = (new ApiKeyUtil(context.getResources())).getApiKey();
         this.movieId = movieId;

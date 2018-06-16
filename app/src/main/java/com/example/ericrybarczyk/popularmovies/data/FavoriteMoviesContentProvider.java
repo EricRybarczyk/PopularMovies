@@ -9,13 +9,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.util.Objects;
 
 public class FavoriteMoviesContentProvider extends ContentProvider {
 
-    public static final int FAVORITE_MOVIES = 100;
-    public static final int FAVORITE_MOVIE_FOR_ID = 101;
-
-    public static final UriMatcher URI_MATCHER = buildUriMatcher();
+    private static final int FAVORITE_MOVIES = 100;
+    private static final int FAVORITE_MOVIE_FOR_ID = 101;
+    private static final UriMatcher URI_MATCHER = buildUriMatcher();
+    private static final String TAG = FavoriteMoviesContentProvider.class.getSimpleName();
 
     private FavoriteMoviesDbHelper dbHelper;
 
@@ -70,7 +73,11 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        result.setNotificationUri(this.getContext().getContentResolver(), uri);
+        try {
+            result.setNotificationUri(Objects.requireNonNull(this.getContext()).getContentResolver(), uri);
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
 
         return result;
     }
@@ -94,7 +101,12 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        this.getContext().getContentResolver().notifyChange(uri, null);
+
+        try {
+            Objects.requireNonNull(this.getContext()).getContentResolver().notifyChange(uri, null);
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
 
         return result;
     }

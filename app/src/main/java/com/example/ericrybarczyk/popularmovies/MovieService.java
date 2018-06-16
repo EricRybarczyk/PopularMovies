@@ -52,12 +52,12 @@ class MovieService {
     private static final String JSON_KEY_TRAILERS_SITE = "site";
     private static final String JSON_KEY_TRAILERS_TYPE = "type";
 
-    private static final String TAG = MovieService.class.getName();
+    private static final String TAG = MovieService.class.getSimpleName();
 
     private final String movieApiKey;
 
 
-    public MovieService(String movieApiKey) {
+    MovieService(String movieApiKey) {
         this.movieApiKey = movieApiKey;
     }
 
@@ -71,7 +71,7 @@ class MovieService {
         try {
             rawMovieData = getMovieData(movieServiceUrl);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
         JSONObject fullMovieCollection;
@@ -96,7 +96,7 @@ class MovieService {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
         return movies;
@@ -119,7 +119,7 @@ class MovieService {
             return new Movie(movieId, title, posterPath, overview, releaseDate, userRating);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
         // return a default movie object to represent error condition in a graceful way
         return getErrorMovie();
@@ -144,7 +144,7 @@ class MovieService {
                 trailers.add(new MovieTrailer(id, key, name, site, type));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
             // return collection will be empty which is acceptable for an error condition
         }
         return trailers;
@@ -166,7 +166,7 @@ class MovieService {
                 reviews.add(new MovieReview(id, author, content));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
             // return collection will be empty which is acceptable for an error condition
         }
         return reviews;
@@ -186,13 +186,13 @@ class MovieService {
         try {
             url = new URL(uri.toString());
         } catch (MalformedURLException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
         return url;
     }
 
-    // this methos works for the calls to get trailers and reviews for a specific movie
+    // this method works for the calls to get trailers and reviews for a specific movie
     private URL buildMoreDetailsUrl(String apiKey, String apiPath, int movieId) {
 
         Uri uri = Uri.parse(MOVIE_API_BASE_URL).buildUpon()
@@ -206,7 +206,7 @@ class MovieService {
         try {
             url = new URL(uri.toString());
         } catch (MalformedURLException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         }
 
         return url;
@@ -218,9 +218,9 @@ class MovieService {
             app/src/main/java/com/example/android/datafrominternet/utilities/NetworkUtils.java
     */
     private String getMovieData(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
+        HttpURLConnection urlConnection = null;
         try {
+            urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
             Scanner scanner = new Scanner(inputStream);
             scanner.useDelimiter("\\A");
@@ -232,15 +232,17 @@ class MovieService {
             }
         }
         catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
             throw e;
         }
         catch (Exception e) {
-            Log.e(TAG, e.getClass().getSimpleName() + " - " + e.getMessage());
-            throw e;
+            Log.e(TAG, e.getMessage(), e);
+            return null;
         }
         finally {
-            urlConnection.disconnect();
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
     }
 

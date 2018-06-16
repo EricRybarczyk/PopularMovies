@@ -11,7 +11,7 @@ public class FavoriteMoviesDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "favoritemovies.db";
     private static final int DATABASE_VERSION = 1;
 
-    public FavoriteMoviesDbHelper(Context context) {
+    FavoriteMoviesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,37 +53,30 @@ public class TrailerListActivity extends AppCompatActivity implements LoaderMana
             return;
         }
 
-        loadTrailers(movieId);
+        loadTrailers();
 
     }
 
-    private void loadTrailers(int movieId) {
-        // TODO - do I need this bundle?  Do I need the same bundle thing in MainActivity equivalent to this method?
-        Bundle bundle = new Bundle();
-        bundle.putInt(MovieAppConstants.KEY_MOVIE_ID, movieId);
-
-        LoaderManager loaderManager = getSupportLoaderManager();
-
-        loaderManager.initLoader(TRAILER_LOADER, null, this);
+    private void loadTrailers() {
+        getSupportLoaderManager().initLoader(TRAILER_LOADER, null, this);
         Log.d(TAG, getString(R.string.log_message_init_loader));
-
-        // TODO ?? make this work like MainActivity.loadMovieDetail() - do I need the refresh thing to restartLoader() vs initLoader() ??
     }
 
     @NonNull
     @Override
     public Loader<List<MovieTrailer>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new MovieTrailerListAsyncTaskLoader(this, this.movieId); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
+        return new MovieTrailerListAsyncTaskLoader(this, this.movieId);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<MovieTrailer>> loader, List<MovieTrailer> data) {
         if (data.isEmpty()) {
             noTrailersMessage.setText(R.string.error_movie_no_trailers_message);
+            noTrailersMessage.setTextColor(ContextCompat.getColor(this, R.color.colorAlert));
             trailersList.setVisibility(View.GONE);
         } else {
             noTrailersMessage.setVisibility(View.GONE);
-            TrailerAdapter trailerAdapter = new TrailerAdapter(this, R.layout.trailer_list_item, data); // TODO - eval for memory leak, should I use application context instead? context.getApplicationContext()
+            TrailerAdapter trailerAdapter = new TrailerAdapter(this, R.layout.trailer_list_item, data);
             trailersList.setAdapter(trailerAdapter);
         }
     }

@@ -16,14 +16,14 @@ import com.example.ericrybarczyk.popularmovies.utils.ApiKeyUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieListAsyncTaskLoader extends AsyncTaskLoader<List<Movie>>{
+class MovieListAsyncTaskLoader extends AsyncTaskLoader<List<Movie>>{
 
     private List<Movie> cachedMovies;
-    private String apiKey;
-    private String sortPreference;
+    private final String apiKey;
+    private final String sortPreference;
     private static final String TAG = MovieListAsyncTaskLoader.class.getSimpleName();
 
-    public MovieListAsyncTaskLoader(@NonNull Context context, String sortPreference) {
+    MovieListAsyncTaskLoader(@NonNull Context context, String sortPreference) {
         super(context);
         apiKey = (new ApiKeyUtil(context.getResources())).getApiKey();
         this.sortPreference = sortPreference;
@@ -63,7 +63,7 @@ public class MovieListAsyncTaskLoader extends AsyncTaskLoader<List<Movie>>{
                     );
                 }
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, e.getMessage(), e);
             } finally {
                 if (cursor != null && !cursor.isClosed()) {
                     cursor.close();

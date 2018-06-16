@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -262,12 +263,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private void setFavoriteIndicator() {
         if (this.isFavorite) {
             favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_SOLID));
-            favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorFavoriteIcon));
-            favoriteLabel.setTextColor(getResources().getColor(R.color.colorFavoriteLabel));
+            favoriteTextIcon.setTextColor(ContextCompat.getColor(this, R.color.colorFavoriteIcon));
+            favoriteLabel.setTextColor(ContextCompat.getColor(this, R.color.colorFavoriteLabel));
         } else {
             favoriteTextIcon.setTypeface(FontManager.getTypeface(this, FontManager.FONTAWESOME_REGULAR));
-            favoriteTextIcon.setTextColor(getResources().getColor(R.color.colorPrimary));
-            favoriteLabel.setTextColor(getResources().getColor(R.color.colorPrimary));
+            favoriteTextIcon.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            favoriteLabel.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
     }
 
@@ -290,7 +291,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -337,13 +338,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     try {
                         File imageFile = new File(getFilesDir(), filename);
                         if (imageFile.exists()) {
-                            imageFile.createNewFile(); // TODO - check bool result and log if error
+                            boolean successOverwrite = imageFile.createNewFile();
+                            if (!successOverwrite) {
+                                Log.e(TAG, getString(R.string.error_image_overwrite));
+                            }
                         }
                         FileOutputStream outputStream = new FileOutputStream(imageFile);
                         bitmap.compress(Bitmap.CompressFormat.JPEG,90, outputStream);
                         outputStream.close();
                     } catch (IOException e) {
-                        Log.e(TAG, getString(R.string.error_image_save) + " - " +  filename + " - " + e.getMessage());
+                        Log.e(TAG, getString(R.string.error_image_save) + " - " +  filename + " - " + e.getMessage(), e);
                     }
                 }).start();
             }
