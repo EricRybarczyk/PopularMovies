@@ -8,17 +8,6 @@ import android.view.MenuItem;
 
 public class SettingsActivity extends AppCompatActivity  {
 
-    // TODO - TMDb Attribution - https://www.themoviedb.org/faq/api - https://www.themoviedb.org/about/logos-attribution
-    /*
-    What are the attribution requirements?
-        You shall use the TMDb logo to identify your use of the TMDb APIs. You shall place the following notice prominently on your application:
-        "This product uses the TMDb API but is not endorsed or certified by TMDb." Any use of the TMDb logo in your application shall be
-        less prominent than the logo or mark that primarily describes the application and your use of the TMDb logo
-        shall not imply any endorsement by TMDb. When attributing TMDb, the attribution must be within your application's "About" or "Credits" type section.
-
-        When using a TMDb logo, we require you to use one of our approved images. https://www.themoviedb.org/about/logos-attribution
-     */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +19,6 @@ public class SettingsActivity extends AppCompatActivity  {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
